@@ -1497,3 +1497,356 @@ body {
     margin: 0;
   }
 }
+
+/* ==========================================================================
+   Mobile Responsiveness Styling (iPhone & Android Adaptability)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  body {
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  #game-container {
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .glass-card {
+    border-radius: 0;
+    padding: 16px 12px;
+    justify-content: flex-start;
+    gap: 15px;
+    height: auto;
+    min-height: calc(100vh - 120px);
+  }
+
+  .game-title {
+    font-size: 1.6rem;
+  }
+
+  .game-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+  }
+
+  .patient-briefing {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .briefing-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .briefing-item {
+    font-size: 0.85rem;
+  }
+
+  .mission-text {
+    font-size: 0.85rem;
+    padding-top: 8px;
+  }
+
+  .btn-large {
+    padding: 10px 24px;
+    font-size: 1.05rem;
+    width: 100%;
+  }
+
+  /* HUD Mobile Optimization */
+  #game-hud {
+    grid-template-columns: 1fr 1fr;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    gap: 8px;
+    border-radius: 0;
+  }
+
+  .hud-item.patient-info {
+    font-size: 0.9rem;
+  }
+
+  .hud-item.sound-control {
+    justify-content: flex-end;
+  }
+
+  .hud-item.progress-tracker {
+    grid-column: span 2;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 6px;
+    margin-top: 2px;
+  }
+
+  .hud-item.clue-trigger {
+    grid-column: span 2;
+    justify-content: center;
+  }
+
+  .hud-item.clue-trigger .btn {
+    width: 100%;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .room-view h2 {
+    font-size: 1.3rem;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .room-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .room-desc {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+
+  .puzzle-content {
+    margin-bottom: 15px;
+  }
+
+  .action-footer {
+    padding-top: 10px;
+  }
+
+  .action-footer .btn {
+    width: 100%;
+  }
+
+  /* Clues panel sidebar slide */
+  #clues-panel {
+    width: 100vw;
+    max-width: 100vw;
+  }
+}
+
+@media (max-width: 650px) {
+  /* Room 1 Safe dial */
+  .safe-dial-group {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .safe-panel {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .dial-container label {
+    font-size: 0.8rem;
+  }
+
+  .safe-input {
+    padding: 8px 12px;
+    font-size: 1.15rem;
+  }
+
+  .indicator {
+    font-size: 0.95rem;
+    padding: 6px 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Room 2 Mini-cog */
+  .clock-puzzle-area {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 12px;
+  }
+
+  .clock-widget {
+    width: 130px;
+    height: 130px;
+  }
+
+  .word-chips {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .word-chip {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .scoring-calculator {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .score-selector {
+    max-width: 100%;
+  }
+
+  /* Room 4 Barriers Dialogue box */
+  .dialogue-box {
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .character-area {
+    flex-direction: row;
+    justify-content: center;
+    min-width: auto;
+    gap: 10px;
+  }
+
+  .char-avatar {
+    font-size: 1.8rem;
+  }
+
+  .bubble {
+    max-width: 100%;
+    align-self: stretch !important;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+  }
+
+  .barrier-matching-area {
+    padding: 12px;
+  }
+
+  .barrier-option-btn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .barrier-node {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 750px) {
+  /* Room 5 Vaccine */
+  .vaccine-puzzle {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .vaccine-section {
+    padding: 12px;
+  }
+
+  .fridge-drag-area {
+    gap: 10px;
+  }
+
+  .storage-locations {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .storage-box {
+    flex: 1;
+    min-width: 90px;
+    padding: 8px;
+    font-size: 0.75rem;
+    min-height: auto;
+  }
+
+  .vial-element {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .vaccine-quiz-item label {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Victory & Certificate scaling */
+  .victory-seal {
+    font-size: 3.5rem;
+  }
+
+  .victory-title {
+    font-size: 1.6rem;
+  }
+
+  .victory-subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+  }
+
+  .clinical-summary {
+    padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .summary-list {
+    font-size: 0.85rem;
+  }
+
+  .certificate-container {
+    padding: 6px;
+    border-width: 4px;
+  }
+
+  .cert-border {
+    padding: 12px;
+    border-width: 4px;
+  }
+
+  .cert-title {
+    font-size: 1.25rem;
+  }
+
+  .cert-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+  }
+
+  .cert-body {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+
+  .cert-footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cert-sign, .cert-date {
+    width: 100%;
+  }
+
+  .sign-line, .date-line {
+    font-size: 0.75rem;
+  }
+
+  .victory-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .victory-actions .btn {
+    width: 100%;
+  }
+}

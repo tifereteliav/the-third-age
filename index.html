@@ -275,28 +275,30 @@
                 </div>
               </div>
 
-              <!-- Task 2: WISDM parameters -->
+              <!-- Task 2: WISDM concepts -->
               <div class="tech-subtask">
-                <h3>שלב ב': נתוני מחקר ה-WISDM בקרב מבוגרים</h3>
-                <p class="instruction-text">הגדר את מחווני המערכת בהתאם לנתוני האמת של מחקר ה-WISDM להפחתת היפוגליקמיה:</p>
+                <h3>שלב ב': הבנת ממצאי מחקר ה-WISDM בקרב מבוגרים</h3>
+                <p class="instruction-text">ענה על שאלות ההבנה הקליניות בנוגע לממצאי המחקר (עיין בשקופיות הרלוונטיות):</p>
                 
                 <div class="gauges-container">
-                  <div class="gauge-control">
-                    <label>אחוז הזמן הממוצע בהיפוגליקמיה (&lt;70 mg/dL) <strong>לאחר</strong> שימוש ב-CGM:</label>
-                    <div class="slider-wrapper">
-                      <input type="range" id="slider-hypo" min="1.0" max="6.0" step="0.1" value="5.1" class="sci-slider">
-                      <span id="slider-hypo-val" class="slider-val">5.1%</span>
-                    </div>
-                    <span class="help-text">רמז: במצב המוצא הזמן היה 5.1%, הסנסור הפחית זאת ל...</span>
+                  <div class="vaccine-quiz-item">
+                    <label>1. מה הייתה המסקנה המרכזית של מחקר ה-WISDM לגבי יעילות הניטור הרציף (CGM)?</label>
+                    <select id="select-wisdm-conclusion" class="form-select">
+                      <option value="">-- בחר תשובה --</option>
+                      <option value="correct">שימוש ב-CGM מפחית משמעותית את זמן ההיפוגליקמיה (מתחת ל-70 מ"ג/ד"ל) בהשוואה לניטור דקירות אצבע.</option>
+                      <option value="wrong1">שימוש ב-CGM מגדיל את אירועי ההיפוגליקמיה אצל מבוגרים.</option>
+                      <option value="wrong2">לא נמצא הבדל משמעותי בזמן ההיפוגליקמיה בין שימוש ב-CGM לבין דקירות אצבע.</option>
+                    </select>
                   </div>
 
-                  <div class="gauge-control">
-                    <label>אחוז המבוגרים שהתמידו בשימוש ב-CGM מעל 6 ימים בשבוע:</label>
-                    <div class="slider-wrapper">
-                      <input type="range" id="slider-adherence" min="50" max="100" step="1" value="50" class="sci-slider">
-                      <span id="slider-adherence-val" class="slider-val">50%</span>
-                    </div>
-                    <span class="help-text">רמז: היענות גבוהה מאוד שנמדדה במחקר</span>
+                  <div class="vaccine-quiz-item">
+                    <label>2. כיצד השפיעו מאפייני המטופל (כמו גיל מעל 70 או קיום ירידה קוגניטיבית) על יעילות הפחתת ההיפוגליקמיה בשימוש ב-CGM?</label>
+                    <select id="select-wisdm-factors" class="form-select">
+                      <option value="">-- בחר תשובה --</option>
+                      <option value="wrong1">הפחתת ההיפוגליקמיה התרחשה אך ורק אצל מבוגרים צעירים יותר עם תפקוד קוגניטיבי מושלם.</option>
+                      <option value="correct">התועלת והפחתת ההיפוגליקמיה היו עקביות ובלתי תלויות בגיל, רמת HbA1c או קיום ירידה קוגניטיבית.</option>
+                      <option value="wrong2">מטופלים עם ירידה קוגניטיבית חוו עלייה באירועי היפוגליקמיה בשימוש ב-CGM.</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -454,7 +456,7 @@
             <h3>סיכום הטיפול במשה:</h3>
             <ul class="summary-list">
               <li>✔️ <strong>אומדן קוגניטיבי וסיכונים:</strong> מיפית את סיכוני הדמנציה והוכחת שמשה כשיר קוגניטיבית למשאבה וסנסור עם ציון Mini-Cog של 4 נקודות.</li>
-              <li>✔️ <strong>התאמה טכנולוגית:</strong> הגדרת מערכת CGM וכיולת את ממצאי מחקר WISDM (הפחתת היפוגליקמיה ל-2.7% והיענות של 83%).</li>
+              <li>✔️ <strong>התאמה טכנולוגית:</strong> הגדרת מערכת CGM וניתחת את ממצאי מחקר ה-WISDM להפחתת היפוגליקמיה באופן עקבי ללא תלות בגיל או במצב קוגניטיבי.</li>
               <li>✔️ <strong>גישור על חסמים:</strong> פתרת את כל 5 החששות האישיים והסביבתיים של משה ורתמת אותו לתהליך.</li>
               <li>✔️ <strong>הגנה חיסונית:</strong> הכנת ונתת למשה את חיסון ה-Shingrix בצורה בטוחה, הגדרת לוח זמנים מרווח (2-6 חודשים) ותיאמת מתן בו-זמני.</li>
             </ul>

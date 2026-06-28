@@ -216,10 +216,8 @@ const elements = {
   selectCgm: document.getElementById('select-cgm'),
   selectAid: document.getElementById('select-aid'),
   selectHcl: document.getElementById('select-hcl'),
-  sliderHypo: document.getElementById('slider-hypo'),
-  sliderHypoVal: document.getElementById('slider-hypo-val'),
-  sliderAdherence: document.getElementById('slider-adherence'),
-  sliderAdherenceVal: document.getElementById('slider-adherence-val'),
+  selectWisdmConclusion: document.getElementById('select-wisdm-conclusion'),
+  selectWisdmFactors: document.getElementById('select-wisdm-factors'),
   btnSubmitRoom3: document.getElementById('btn-submit-room3'),
   
   // Room 4 Elements
@@ -374,13 +372,6 @@ function setupEventListeners() {
 
   elements.btnSubmitRoom2.addEventListener('click', validateRoom2);
 
-  // Room 3 Sliders Logic
-  elements.sliderHypo.addEventListener('input', () => {
-    elements.sliderHypoVal.innerText = `${elements.sliderHypo.value}%`;
-  });
-  elements.sliderAdherence.addEventListener('input', () => {
-    elements.sliderAdherenceVal.innerText = `${elements.sliderAdherence.value}%`;
-  });
   elements.btnSubmitRoom3.addEventListener('click', validateRoom3);
 
   // Room 4 Barrier bypass triggers
@@ -389,7 +380,7 @@ function setupEventListeners() {
     loadRoom(5);
   });
 
-  // Room 5 Vaccine Drag & Drop
+  // Room 5 Vaccine Drag & Drop (with Mobile Tap-to-Place fallback)
   elements.vaccineVial.addEventListener('dragstart', (e) => {
     e.dataTransfer.setData('text/plain', 'vaccine');
     elements.vaccineVial.classList.add('dragged');
@@ -397,6 +388,19 @@ function setupEventListeners() {
 
   elements.vaccineVial.addEventListener('dragend', () => {
     elements.vaccineVial.classList.remove('dragged');
+  });
+
+  // Mobile Tap-to-Place support
+  elements.vaccineVial.addEventListener('click', () => {
+    playSound('click');
+    state.selectedVialForTap = !state.selectedVialForTap;
+    if (state.selectedVialForTap) {
+      elements.vaccineVial.style.border = '2px solid var(--success-neon)';
+      elements.vaccineVial.style.boxShadow = '0 0 15px var(--success-glow)';
+    } else {
+      elements.vaccineVial.style.border = '2px dashed var(--primary-neon)';
+      elements.vaccineVial.style.boxShadow = 'none';
+    }
   });
 
   elements.storageBoxes.forEach(box => {
@@ -415,20 +419,35 @@ function setupEventListeners() {
       const data = e.dataTransfer.getData('text/plain');
       
       if (data === 'vaccine') {
-        const temp = parseInt(box.getAttribute('data-temp'), 10);
-        if (temp === 4) { // Fridge is 2-8 degrees
-          playSound('success');
-          state.vaccineStoredCorrectly = true;
-          box.innerHTML = `<span class="box-title highlight-green">החיסון מאוחסן בבטחה במקרר (4°C) ❄️</span>`;
-          elements.vaccineVial.style.display = 'none';
-          elements.reconstitutePanel.classList.remove('hidden');
-        } else {
-          playSound('error');
-          alert("טמפרטורה לא מתאימה! החיסון רקומביננטי ודורש אחסון במקרר בטמפרטורה של 2-8 מעלות צלזיוס בלבד. הקפאה או השארה בטמפרטורת החדר יפגעו ביעילות התכשיר.");
-        }
+        handleVaccinePlacement(box);
+      }
+    });
+
+    // Mobile click-to-place handler
+    box.addEventListener('click', () => {
+      if (state.selectedVialForTap) {
+        handleVaccinePlacement(box);
       }
     });
   });
+
+  function handleVaccinePlacement(box) {
+    const temp = parseInt(box.getAttribute('data-temp'), 10);
+    if (temp === 4) { // Fridge is 2-8 degrees
+      playSound('success');
+      state.vaccineStoredCorrectly = true;
+      box.innerHTML = `<span class="box-title highlight-green">החיסון מאוחסן בבטחה במקרר (4°C) ❄️</span>`;
+      elements.vaccineVial.style.display = 'none';
+      elements.reconstitutePanel.classList.remove('hidden');
+      state.selectedVialForTap = false;
+    } else {
+      playSound('error');
+      alert("טמפרטורה לא מתאימה! החיסון רקומביננטי ודורש אחסון במקרר בטמפרטורה של 2-8 מעלות צלזיוס בלבד. הקפאה או השארה בטמפרטורת החדר יפגעו ביעילות התכשיר.");
+      elements.vaccineVial.style.border = '2px dashed var(--primary-neon)';
+      elements.vaccineVial.style.boxShadow = 'none';
+      state.selectedVialForTap = false;
+    }
+  }
 
   // Vaccine mixing logic
   elements.btnMixVials.addEventListener('click', () => {
@@ -665,33 +684,28 @@ function validateRoom3() {
   const isAidMatch = elements.selectAid.value === 'aid';
   const isHclMatch = elements.selectHcl.value === 'hcl';
   
-  // 2. Validate WISDM study values
-  // Hypo time reduction: expected 2.7% (baseline 5.1%). Allow tolerance 0.1
-  const hypoVal = parseFloat(elements.sliderHypo.value);
-  const isHypoCorrect = Math.abs(hypoVal - 2.7) <= 0.1;
+  // 2. Validate WISDM study questions
+  const isConclusionCorrect = elements.selectWisdmConclusion.value === 'correct';
+  const isFactorsCorrect = elements.selectWisdmFactors.value === 'correct';
   
-  // Adherence: expected 83%. Allow tolerance 1%
-  const adherenceVal = parseInt(elements.sliderAdherence.value, 10);
-  const isAdherenceCorrect = Math.abs(adherenceVal - 83) <= 1;
-  
-  if (isCgmMatch && isAidMatch && isHclMatch && isHypoCorrect && isAdherenceCorrect) {
+  if (isCgmMatch && isAidMatch && isHclMatch && isConclusionCorrect && isFactorsCorrect) {
     playSound('success');
     state.completedRooms.add(3);
     elements.btnSubmitRoom3.disabled = true;
     
-    alert("המערכת הוגדרה בהצלחה! מחקר ה-WISDM הוכיח כי ניטור רציף (CGM) אצל קשישים מפחית משמעותית היפוגליקמיות ל-2.7% בממוצע, עם היענות אדירה של 83% שימוש!");
+    alert("המערכת הוגדרה בהצלחה! הבנת היטב את ממצאי מחקר ה-WISDM: ניטור סוכר רציף (CGM) מפחית משמעותית אירועי היפוגליקמיה במבוגרים, ותועלת זו עקבית לכולם ואינה תלויה בגיל או במצב קוגניטיבי!");
     
     setTimeout(() => {
       loadRoom(4);
     }, 1000);
   } else {
     playSound('error');
-    let errMsg = "הגדרות המכשיר נכשלו:\n";
+    let errMsg = "חלק מההגדרות שגויות:\n";
     if (!isCgmMatch || !isAidMatch || !isHclMatch) errMsg += "- שיוך ראשי התיבות אינו מדויק.\n";
-    if (!isHypoCorrect) errMsg += "- הגדרת אחוז הזמן בהיפוגליקמיה אינה מדויקת (עיין בשקופית 12).\n";
-    if (!isAdherenceCorrect) errMsg += "- אחוז התמדת המטופלים במחקר ה-WISDM אינו מדויק (עיין בשקופית 10).\n";
+    if (!isConclusionCorrect) errMsg += "- התשובה לשאלה 1 לגבי יעילות ה-CGM אינה נכונה.\n";
+    if (!isFactorsCorrect) errMsg += "- התשובה לשאלה 2 לגבי השפעת מאפייני המטופל אינה נכונה.\n";
     
-    alert(errMsg + "\nכייל את המחוונים ונסה שוב.");
+    alert(errMsg + "\nעיין בשקופיות הרמז ונסה שוב.");
   }
 }
 
