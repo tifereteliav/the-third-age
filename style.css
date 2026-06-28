@@ -1183,3 +1183,357 @@ body {
     opacity: 0;
   }
 }
+
+
+/* ==========================================================================
+   True 3D Escape Room & Electronic Corridor Styling
+   ========================================================================== */
+
+/* Perspective 3D Room Box */
+.room-3d {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  perspective: 800px;
+  perspective-origin: center center;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.5, 0, 0.1, 1), opacity 1.2s ease-in-out;
+  background: #060913;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+/* 3D perspective floor grid lines */
+.room-floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  transform-origin: center bottom;
+  transform: rotateX(90deg);
+  background: radial-gradient(circle at center, #131d30 0%, #060913 100%);
+  border-top: 2px solid rgba(58, 134, 255, 0.12);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.room-floor::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(rgba(58, 134, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 134, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.8;
+}
+
+.room-ceiling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  transform-origin: center top;
+  transform: rotateX(-90deg);
+  background: linear-gradient(180deg, #090e1a 0%, #060913 100%);
+  border-bottom: 2px solid rgba(58, 134, 255, 0.08);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.room-wall {
+  position: absolute;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.room-wall-left {
+  left: 0;
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  background: linear-gradient(90deg, #050811 0%, #15223c 100%);
+  border-right: 2px solid rgba(58, 134, 255, 0.1);
+}
+
+.room-wall-right {
+  right: 0;
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  background: linear-gradient(-90deg, #050811 0%, #15223c 100%);
+  border-left: 2px solid rgba(58, 134, 255, 0.1);
+}
+
+.back-wall {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  transform: translateZ(-260px);
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 20px;
+  z-index: 2;
+  transform-style: preserve-3d;
+}
+
+/* Dynamic Walking Zoom Animations (Scale & Translate toward the chosen door) */
+.room-3d.zoom-door-0 {
+  transform: scale(3.2) translate3d(28%, 0, 150px);
+  opacity: 0;
+}
+
+.room-3d.zoom-door-1 {
+  transform: scale(3.2) translate3d(0, 0, 150px);
+  opacity: 0;
+}
+
+.room-3d.zoom-door-2 {
+  transform: scale(3.2) translate3d(-28%, 0, 150px);
+  opacity: 0;
+}
+
+/* Soft transition entering the next corridor room */
+.room-3d.fade-enter {
+  transform: scale(0.45) translate3d(0, 0, 0);
+  opacity: 0;
+}
+
+/* Door Container and Wall Frame */
+.door-container {
+  position: relative;
+  perspective: 1000px;
+  z-index: 2;
+  background: radial-gradient(circle, rgba(0, 245, 212, 0.2) 0%, rgba(0, 0, 0, 0.95) 85%);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  width: 28%;
+  height: 320px;
+}
+
+/* Door Frame (משקוף) */
+.door-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 6px solid #080f1d;
+  border-radius: 12px;
+  box-shadow: inset 0 0 12px rgba(0,0,0,0.95), 0 0 8px rgba(58, 134, 255, 0.12);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Outer LED indicator above the door frame */
+.door-container::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 5px;
+  background: var(--warning-neon);
+  box-shadow: 0 0 8px var(--warning-glow);
+  border-radius: 2px;
+  z-index: 4;
+  transition: all 0.3s;
+}
+
+.door-container.correct-unlocked::after {
+  background: var(--success-neon);
+  box-shadow: 0 0 10px var(--success-glow);
+}
+
+/* Door Card (the swinging leaf) */
+.door-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: right center; /* Hinge on the right edge (standard RTL hinge style) */
+  z-index: 2;
+}
+
+.door-front {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #1b263b 0%, #0d1b2a 100%);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+/* Reader and Screen details */
+.door-card-reader {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 24px;
+  background: #252830;
+  border-radius: 1px;
+  border-right: 2px solid var(--warning-neon);
+  box-shadow: 0 0 5px var(--warning-glow);
+}
+
+.door-container.correct-unlocked .door-card-reader {
+  border-right-color: var(--success-neon);
+  box-shadow: 0 0 8px var(--success-glow);
+}
+
+.door-screen {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(58, 134, 255, 0.2);
+  box-shadow: inset 0 0 10px rgba(58, 134, 255, 0.15);
+  border-radius: 8px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 12px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #e5e7eb;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.door-container:hover .door-front {
+  border-color: var(--primary-neon);
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+/* Golden selection border - doesn't reveal correctness during play */
+.door-card.selected-door .door-front {
+  border-color: var(--warning-neon) !important;
+  box-shadow: 0 0 20px var(--warning-glow) !important;
+  background: linear-gradient(145deg, #24344f 0%, #15233c 100%) !important;
+}
+
+.door-card.selected-door .door-screen {
+  border-color: var(--warning-neon);
+  box-shadow: inset 0 0 10px rgba(255, 190, 11, 0.15);
+}
+
+/* Door Open Animation (swinging Y rotation) */
+.door-opened {
+  transform: rotateY(110deg);
+  pointer-events: none;
+}
+
+/* Glowing exit pathway indicator inside the door frame */
+.door-pathway-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  color: var(--success-neon);
+  text-shadow: 0 0 20px var(--success-glow);
+  z-index: 1;
+  pointer-events: none;
+  animation: pulseLight 1.5s infinite alternate;
+}
+
+/* Media query updates for mobile */
+@media (max-width: 768px) {
+  .room-wall, .room-floor, .room-ceiling {
+    display: none !important;
+  }
+  
+  .back-wall {
+    position: relative !important;
+    transform: none !important;
+    flex-direction: column !important;
+    height: auto !important;
+    gap: 12px !important;
+    padding: 5px !important;
+    justify-content: flex-start !important;
+    transform-style: flat !important;
+  }
+
+  .room-3d {
+    height: auto !important;
+    background: none !important;
+    border: none !important;
+    perspective: none !important;
+    transform-style: flat !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+  }
+
+  .door-container {
+    width: 100% !important;
+    height: 105px !important;
+  }
+
+  .door-card {
+    transform-origin: top center !important; /* Swings upwards like a trapdoor on mobile */
+  }
+
+  .door-opened {
+    transform: rotateX(-105deg) !important;
+  }
+
+  .door-front {
+    padding: 8px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .door-card-reader {
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(90deg);
+    width: 5px;
+    height: 18px;
+  }
+
+  .door-screen {
+    font-size: 0.82rem;
+    line-height: 1.35;
+    padding: 10px 14px;
+    text-align: right;
+  }
+  
+  .room-3d.zoom-door-0 {
+    transform: scale(2.2) translate3d(0, 30%, 0) !important;
+    opacity: 0;
+  }
+
+  .room-3d.zoom-door-1 {
+    transform: scale(2.2) translate3d(0, 0, 0) !important;
+    opacity: 0;
+  }
+
+  .room-3d.zoom-door-2 {
+    transform: scale(2.2) translate3d(0, -30%, 0) !important;
+    opacity: 0;
+  }
+}

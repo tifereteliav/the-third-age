@@ -6,7 +6,7 @@ const state = {
   activeSelectionActive: true
 };
 
-// 8 Clinical Questions Database
+// 8 Clinical Questions Database (Simplified & Direct)
 const questionsData = [
   {
     indexLabel: "דלת 1: סיכון דמנציה מול גיל פרוץ סוכרת",
@@ -259,7 +259,8 @@ const elements = {
   // Game Play elements
   questionIndexLabel: document.getElementById('question-index-label'),
   questionText: document.getElementById('question-text'),
-  doorsContainer: document.getElementById('doors-container'),
+  room3dContainer: document.getElementById('room-3d-container'), // The 3D Room Box
+  doorsContainer: document.getElementById('doors-container'), // The Back Wall
   feedbackPanel: document.getElementById('feedback-panel'),
   feedbackText: document.getElementById('feedback-text'),
   feedbackActionArea: document.getElementById('feedback-action-area'),
@@ -353,7 +354,7 @@ function setupEventListeners() {
     }
   });
 
-  // Next question click (with walking zoom transition)
+  // Next question click (with 3D Room Box walking zoom transition)
   elements.btnNextQuestion.addEventListener('click', () => {
     if (!state.activeSelectionActive) return;
     state.activeSelectionActive = false; // Block clicks during walking animation
@@ -367,19 +368,19 @@ function setupEventListeners() {
     container.classList.add('correct-unlocked');
     card.classList.add('door-opened');
     
-    // Zoom/walk camera forward through the selected door
-    elements.doorsContainer.classList.add("zoom-door-" + choice);
+    // Zoom/walk camera forward through the selected door into the Room Box
+    elements.room3dContainer.classList.add("zoom-door-" + choice);
     
     setTimeout(() => {
       const nextIndex = state.currentQuestionIndex + 1;
       if (nextIndex < questionsData.length) {
         loadQuestion(nextIndex);
         
-        // emerging walk-out effect in the next corridor room
-        elements.doorsContainer.className = 'doors-grid fade-enter';
+        // emerging walk-out effect in the next room box
+        elements.room3dContainer.className = 'room-3d fade-enter';
         // Force reflow
-        elements.doorsContainer.offsetHeight;
-        elements.doorsContainer.classList.remove('fade-enter');
+        elements.room3dContainer.offsetHeight;
+        elements.room3dContainer.classList.remove('fade-enter');
         
         state.activeSelectionActive = true;
       } else {
@@ -436,8 +437,8 @@ function loadQuestion(index) {
   state.activeSelectionActive = true;
   updateHUD();
   
-  // Reset doors container class
-  elements.doorsContainer.className = 'doors-grid';
+  // Reset room box container class
+  elements.room3dContainer.className = 'room-3d';
   
   const qData = questionsData[index];
   
@@ -449,9 +450,8 @@ function loadQuestion(index) {
   elements.feedbackText.innerText = "בחר בדלת בעלת התשובה הנכונה ביותר...";
   elements.feedbackActionArea.classList.add('hidden');
   
-  // Render doors
+  // Render doors (without any letters or labels - looks like a real 3D room doorway!)
   elements.doorsContainer.innerHTML = '';
-  const labels = ['א', 'ב', 'ג'];
   
   qData.doors.forEach((door, idx) => {
     const container = document.createElement('div');
@@ -461,11 +461,8 @@ function loadQuestion(index) {
         '<div class="door-pathway-glow">🔓</div>' +
         '<div class="door-card" id="door-card-' + idx + '">' +
           '<div class="door-front">' +
-            '<div class="door-panel">' +
-              '<div class="door-handle"></div>' +
-              '<div class="door-number">דלת ' + labels[idx] + '</div>' +
-              '<div class="door-text-plate">' + door.answer + '</div>' +
-            '</div>' +
+            '<div class="door-card-reader"></div>' +
+            '<div class="door-screen">' + door.answer + '</div>' +
           '</div>' +
         '</div>';
     
