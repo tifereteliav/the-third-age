@@ -374,6 +374,15 @@ function setupEventListeners() {
     // Zoom/walk camera forward through the selected door into the Room Box
     elements.room3dContainer.classList.add("zoom-door-" + choice);
     
+    // Set dynamic transition image to show progression in space
+    const transitionImages = ['clinic_corridor.png', 'clinic_lab.png', 'clinic_server.png', 'clinic_gate.png'];
+    const imgIndex = state.currentQuestionIndex % transitionImages.length;
+    const nextImg = transitionImages[imgIndex];
+    const bgElement = elements.transitionOverlay.querySelector('.transition-bg');
+    if (bgElement) {
+      bgElement.style.backgroundImage = "url('" + nextImg + "')";
+    }
+    
     // Show full-screen atmospheric transition corridor overlay after a short delay
     setTimeout(() => {
       elements.transitionOverlay.classList.remove('hidden');
