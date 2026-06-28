@@ -494,7 +494,7 @@ function handleDoorSelection(doorIdx, doorData) {
   
   // Show next button and update description box neutrally
   elements.feedbackPanel.className = 'feedback-panel idles';
-  elements.feedbackText.innerText = 'דלת נבחרה. לחץ "המשך" כדי לעבור לשלב הבא באתגר.';
+  elements.feedbackText.innerText = 'דלת נבחרה. לחץ "לפתח את הדלת" כדי לפתוח אותה ולהתקדם.';
   elements.feedbackActionArea.classList.remove('hidden');
 }
 
