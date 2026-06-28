@@ -1,89 +1,184 @@
 /* ==========================================================================
-   Game Logic & Interactions: The Third Age Escape Room
+   Game Logic & State: 3D Doors Clinical Escape Room
    ========================================================================== */
 
 // Game State
 const state = {
-  currentRoom: 1,
-  completedRooms: new Set(),
+  currentQuestionIndex: 0,
   playerName: "דר' דנה",
   soundEnabled: true,
-  
-  // Room 2 State (Clock)
-  hourAngle: 0,     // 0 degrees corresponds to 12:00
-  minuteAngle: 0,   // 0 degrees corresponds to :00
-  selectedWords: new Set(),
-  
-  // Room 4 State (Barriers)
-  currentBarrierIndex: 0,
-  barriersCompleted: 0,
-  
-  // Room 5 State (Vaccine)
-  vaccineStoredCorrectly: false,
-  vaccineMixed: false,
-  vaccineShaken: false
+  completedQuestions: new Set(),
+  activeSelectionActive: true // blocks clicks during animations
 };
 
-// Barriers Data (Room 4)
-const barriersData = [
+// 8 Clinical Questions Database
+const questionsData = [
   {
-    title: "פחד מכישלון וטעויות",
-    statement: "אני מפחד לעשות נזק אם אלחץ על כפתור לא נכון במכשיר. כל הטכנולוגיה הזאת מסובכת ואני עלול לקלקל אותה...",
-    correctAnswer: "הדרכת תרגול מובנית ואיטית, תוך תרגול פיזי מודרך, ובמידת האפשר שיתוף של בן משפחה תומך (Care-giver) בתהליך הלמידה.",
-    options: [
-      "הדרכת תרגול מובנית ואיטית, תוך תרגול פיזי מודרך, ובמידת האפשר שיתוף של בן משפחה תומך (Care-giver) בתהליך הלמידה.",
-      "הגדלת תצוגת המסך של המערכת, הפעלת התראות קוליות או רטט חזקות, ושימוש באפליקציות ייעודיות למוגבלויות ראייה.",
-      "הסבר מותאם על כך שהסנסור יפחית בכחצי את אירועי הירידה המסוכנת בסוכר (היפוגליקמיה) ויחסוך דקירות אצבע יומיות.",
-      "חיבור למוקד תמיכה טלפוני רפואי וטכנולוגי הזמין 24/7 ושימוש בציוד גיבוי פשוט במקרה של תקלה.",
-      "הסבר על הצפנת הנתונים במערכת, התאמה לפרוטוקול אבטחה של משרד הבריאות, ואימות זהות דו-שלבי."
+    indexLabel: "דלת 1: סיכון דמנציה מול גיל פרוץ סוכרת",
+    question: "משה אובחן עם סוכרת סוג 2 בגיל 56 (כלומר 12 שנים לפני גיל 70). על פי מחקר ה-JAMA המפורסם משנת 2021, מהו יחס הסיכון (Hazard Ratio) שלו לפתח דמנציה בהשוואה לאדם ללא סוכרת בגיל 70?",
+    doors: [
+      {
+        answer: "יחס סיכון (HR) של 1.11 - סיכון מוגבר קלות בלבד (תואם לפרוץ סוכרת של 5 שנים ומטה לפני גיל 70).",
+        correct: false,
+        explanation: "לא מדויק. יחס סיכון של 1.11 תואם למטופלים שאובחנו עם סוכרת ממש סמוך לגיל 70 (עד 5 שנים). משה אובחן הרבה קודם לכן."
+      },
+      {
+        answer: "יחס סיכון (HR) של 1.49 - סיכון מוגבר בינוני (תואם לפרוץ סוכרת של 6 עד 10 שנים לפני גיל 70).",
+        correct: false,
+        explanation: "לא מדויק. יחס סיכון של 1.49 תואם למטופלים שאובחנו 6-10 שנים לפני גיל 70. משה אובחן לפני 12 שנים (מעל 10 שנים)."
+      },
+      {
+        answer: "יחס סיכון (HR) של 2.12 - סיכון מוגבר ביותר מפי 2 (תואם לפרוץ סוכרת של מעל 10 שנים לפני גיל 70) 🗝️",
+        correct: true,
+        explanation: "נכון מאוד! מחקר ה-JAMA הוכיח קשר הדרגתי: ככל שהסוכרת מתפרצת מוקדם יותר, הסיכון לדמנציה עולה. אבחון מעל 10 שנים לפני גיל 70 מעלה את הסיכון פי 2.12."
+      }
     ]
   },
   {
-    title: "ירידה פיזית ומוטורית",
-    statement: "האצבעות שלי כבר לא כל כך זריזות, קשה לי ללחוץ על מסכים קטנים והראייה שלי לא כמו פעם. איך אסתדר עם המכשיר?",
-    correctAnswer: "הגדלת תצוגת המסך של המערכת, הפעלת התראות קוליות או רטט חזקות, ושימוש באפליקציות ייעודיות למוגבלויות ראייה.",
-    options: [
-      "הדרכת תרגול מובנית ואיטית, תוך תרגול פיזי מודרך, ובמידת האפשר שיתוף של בן משפחה תומך.",
-      "הגדלת תצוגת המסך של המערכת, הפעלת התראות קוליות או רטט חזקות, ושימוש באפליקציות ייעודיות למוגבלויות ראייה.",
-      "הסבר מותאם על כך שהסנסור יפחית בכחצי את אירועי הירידה המסוכנת בסוכר ויחסוך דקירות אצבע יומיות.",
-      "חיבור למוקד תמיכה טלפוני רפואי וטכנולוגי הזמין 24/7.",
-      "הסבר על הצפנת הנתונים במערכת."
+    indexLabel: "דלת 2: מבחן ה-Mini-Cog",
+    question: "לפני חיבור של משה לטכנולוגיית סוכרת מתקדמת (CGM ומשאבה), ביצעת לו אומדן קוגניטיבי בעזרת מבחן Mini-Cog. משה הצליח להיזכר ב-2 מתוך 3 מילים, וציור השעון שלו (11:10) נמצא תקין לחלוטין. מהו הציון הכולל שלו, והאם הוא כשיר?",
+    doors: [
+      {
+        answer: "ציון 2 - הוא אינו כשיר לחיבור עצמאי ומחייב מעורבות מלאה של מטפל צמוד.",
+        correct: false,
+        explanation: "שגיאה. ציור שעון תקין מזכה ב-2 נקודות בפני עצמו, ובנוסף משה זכר 2 מילים (עוד 2 נקודות). הציון שלו גבוה מ-2."
+      },
+      {
+        answer: "ציון 4 - משה נמצא תקין (כשיר קוגניטיבית לחיבור לטכנולוגיה) 🗝️",
+        correct: true,
+        explanation: "מצוין! משה מקבל 2 נקודות על שחזור המילים ועוד 2 נקודות על השעון התקין. ציון 3 ומעלה נחשב תקין ומאפשר מעבר לטכנולוגיות מתקדמות לאחר הדרכה מתאימה."
+      },
+      {
+        answer: "ציון 5 - משה נמצא תקין לחלוטין (ציון מקסימלי).",
+        correct: false,
+        explanation: "לא מדויק. ציון 5 ניתן רק אם המטופל זוכר את כל 3 המילים (3 נקודות) ומצייר שעון תקין (2 נקודות). משה זכר רק 2 מילים."
+      }
     ]
   },
   {
-    title: "היעדר תמיכה והדרכה",
-    statement: "מה אעשה בבית אם תהיה תקלה בלילה? מי יעזור לי כשהאחות במרפאה לא עובדת? אני אשאר לבד חסר אונים...",
-    correctAnswer: "חיבור למוקד תמיכה טלפוני רפואי וטכנולוגי הזמין 24/7 ושימוש בציוד גיבוי פשוט (Low Tech) כחלק מתוכנית הגיבוי.",
-    options: [
-      "הדרכת תרגול מובנית ואיטית, תוך תרגול פיזי מודרך.",
-      "הגדלת תצוגת המסך של המערכת.",
-      "חיבור למוקד תמיכה טלפוני רפואי וטכנולוגי הזמין 24/7 ושימוש בציוד גיבוי פשוט (Low Tech) כחלק מתוכנית הגיבוי.",
-      "הסבר מותאם על כך שהסנסור יפחית בכחצי את אירועי הירידה המסוכנת בסוכר.",
-      "הסבר על הצפנת הנתונים במערכת."
+    indexLabel: "דלת 3: יעילות CGM במבוגרים (מחקר WISDM)",
+    question: "משה חושש שהטכנולוגיה לא תועיל לו בגלל גילו. בהסתמך על ממצאי מחקר ה-WISDM בקרב מבוגרים מעל גיל 60 עם סוכרת, מהי המסקנה הקלינית הרחבה לגבי יעילות הניטור הרציף (CGM)?",
+    doors: [
+      {
+        answer: "הפחתת ההיפוגליקמיה בשימוש ב-CGM היא משמעותית ועקבית לכולם, ללא תלות בגיל או בקיום ירידה קוגניטיבית 🗝️",
+        correct: true,
+        explanation: "תשובה מדויקת! מחקר ה-WISDM הוכיח כי השימוש ב-CGM מפחית משמעותית ובאופן בטוח את זמן ההיפוגליקמיה, והיתרון הזה נשמר ללא קשר למאפייני הרקע, לגיל המדויק או לקיומה של ירידה קוגניטיבית קלה."
+      },
+      {
+        answer: "CGM מפחית היפוגליקמיות רק בקרב מבוגרים מתחת לגיל 70 בעלי תפקוד קוגניטיבי מושלם.",
+        correct: false,
+        explanation: "שגיאה. ממצאי ה-WISDM הראו במפורש שההפחתה בהיפוגליקמיות הייתה עקבית ובלתי תלויה ביכולת הקוגניטיבית או בגיל המטופל."
+      },
+      {
+        answer: "התועלת של CGM במבוגרים היא מועטה, וההיענות לשימוש במכשיר יורדת מתחת ל-50% כעבור 6 חודשים.",
+        correct: false,
+        explanation: "הפוך לגמרי! ההיענות (Adherence) במחקר WISDM הייתה גבוהה ביותר - 83% מהמשתתפים השתמשו ב-CGM מעל 6 ימים בשבוע לאורך כל תקופת המחקר."
+      }
     ]
   },
   {
-    title: "חוסר בתועלת נתפסת",
-    statement: "בשביל מה לי את כל הבלגן הזה? אני כבר שנים דוקר את האצבע ומסתדר מצוין. זה סתם מכשיר מיותר שייצמד לי לגוף...",
-    correctAnswer: "הסבר מותאם על כך שהסנסור יפחית בכחצי את אירועי הירידה המסוכנת בסוכר (היפוגליקמיה) ויחסוך דקירות אצבע יומיות.",
-    options: [
-      "הדרכת תרגול מובנית ואיטית.",
-      "הגדלת תצוגת המסך של המערכת.",
-      "חיבור למוקד תמיכה טלפוני רפואי וטכנולוגי הזמין 24/7.",
-      "הסבר מותאם על כך שהסנסור יפחית בכחצי את אירועי הירידה המסוכנת בסוכר (היפוגליקמיה) ויחסוך דקירות אצבע יומיות.",
-      "הסבר על הצפנת הנתונים במערכת."
+    indexLabel: "דלת 4: פתרון חסמים - פחד מטעויות",
+    question: "משה משתף אותך בחשש שלו: 'אני מפחד לעשות נזק אם אלחץ על כפתור לא נכון במכשיר. כל הטכנולוגיה הזו נראית לי מסובכת מדי'. מהו המענה הטיפולי הנכון ביותר לחסם זה?",
+    doors: [
+      {
+        answer: "הפעלת מצב תצוגה מונגש ומלל מוגדל במכשיר על מנת להקל על הראייה שלו.",
+        correct: false,
+        explanation: "לא החסם המרכזי כאן. החשש של משה נובע מחרדה טכנולוגית ופחד מטעויות (טכנופוביה), ולא מקושי פיזי של ראייה."
+      },
+      {
+        answer: "הדרכת תרגול מובנית ואיטית, ביצוע תרגול פיזי מודרך, ובמידת האפשר שיתוף של בן משפחה תומך (Care-giver) בתהליך 🗝️",
+        correct: true,
+        explanation: "כל הכבוד! כדי להתגבר על חרדה טכנולוגית, מומלץ לבצע הדרכה מובנית ואיטית, לתת למטופל להתנסות בעצמו פיזית, ולרתום את קרוב המשפחה המטפל (Care-giver) כרשת ביטחון ותמיכה."
+      },
+      {
+        answer: "חיבור שלו למוקד תמיכה טלפוני רפואי וטכנולוגי הזמין 24/7.",
+        correct: false,
+        explanation: "תמיכה טלפונית היא חשובה, אך היא אינה פותרת את חרדת הלמידה הראשונית ואת הפחד לתפעל את המכשיר בבית ללא הדרכה מסודרת."
+      }
     ]
   },
   {
-    title: "חשש מפרטיות ואבטחת מידע",
-    statement: "אני דואג שיפרצו למכשיר שלי מהאינטרנט ויגנבו את המידע הרפואי שלי, או גרוע מכך - ישבשו את הזלפת האינסולין במשאבה שלי!",
-    correctAnswer: "הסבר על הצפנת הנתונים במערכת, התאמה לפרוטוקול אבטחה של משרד הבריאות, ואימות זהות דו-שלבי להגנה מלאה.",
-    options: [
-      "הדרכת תרגול מובנית ואיטית.",
-      "הגדלת תצוגת המסך של המערכת.",
-      "חיבור למוקד תמיכה טלפוני רפואי וטכנולוגי הזמין 24/7.",
-      "הסבר מותאם על כך שהסנסור יפחית בכחצי את אירועי הירידה המסוכנת בסוכר.",
-      "הסבר על הצפנת הנתונים במערכת, התאמה לפרוטוקול אבטחה של משרד הבריאות, ואימות זהות דו-שלבי להגנה מלאה."
+    indexLabel: "דלת 5: זכאות לחיסון Shingrix בסל",
+    question: "משה מעוניין להתחסן נגד שלבקת חוגרת (חיסון Shingrix - RZV). משה הוא בן 68 ואין לו מחלות רקע מיוחדות. האם הוא זכאי לקבל את החיסון בסבסוד מלא בתוך סל הבריאות הנוכחי?",
+    doors: [
+      {
+        answer: "לא, החיסון כלול בסל הבריאות רק למבוגרים מעל גיל 75 או למטופלים מדוכאי חיסון.",
+        correct: false,
+        explanation: "לא נכון. גיל הזכאות בסל ללא מחלות רקע נמוך מ-75."
+      },
+      {
+        answer: "כן, החיסון מומלץ מגיל 50 ומעלה, וכלול בסל הבריאות ללא מחלות רקע לבני 65 ומעלה (ומשה בן 68) 🗝️",
+        correct: true,
+        explanation: "נכון מאוד! על פי תדריך החיסונים של משרד הבריאות, החיסון מומלץ לכל אדם מעל גיל 50, וכלול בסל הבריאות בסבסוד מלא עבור בני 65 ומעלה ללא צורך במחלת רקע."
+      },
+      {
+        answer: "לא, החיסון אינו כלול בסל עבור אנשים בריאים, והוא ניתן רק למאובחנים שחלו בשלבקת חוגרת בשנה האחרונה.",
+        correct: false,
+        explanation: "שגיאה. החיסון מיועד למניעה (רפואה מונעת) וניתן ללא קשר לשאלה האם חלו בעבר (למעשה, מומלץ לתת אותו גם למי שחלה בעבר לאחר החלמת הפצעים)."
+      }
+    ]
+  },
+  {
+    indexLabel: "דלת 6: טמפרטורת אחסון Shingrix",
+    question: "קיבלת את ערכת חיסון ה-Shingrix (אבקה ותרחיף לשחזור). כיצד יש לאחסן את התרכיב במרפאה לפני הכנתו למשה?",
+    doors: [
+      {
+        answer: "במקרר בטמפרטורה של 2°C עד 8°C באריזה המקורית. חל איסור מוחלט להקפיא את התרכיב! 🗝️",
+        correct: true,
+        explanation: "נכון ביותר! יש לשמור את החיסון במקרר (2-8 מעלות) ולהימנע מחשיפה לאור (באריזה המקורית). הקפאה של התכשיר או התרחיף תהרוס אותו ותפסול אותו לשימוש."
+      },
+      {
+        answer: "במקפיא בטמפרטורה של 18°C- כדי למנוע פירוק של הגליקופרוטאין הרקומביננטי.",
+        correct: false,
+        explanation: "שגיאה חמורה! אסור להקפיא את חיסון ה-Shingrix בשום אופן. הקפאה פוגעת במבנה החלבון ובתרחיף ה-Adjuvant שלו."
+      },
+      {
+        answer: "במדף פתוח או בארון התרופות (עד 25°C), כל עוד החיסון לא עבר שחזור עם הנוזל.",
+        correct: false,
+        explanation: "לא נכון. החיסון רגיש לחום וחייב להישמר בשרשרת קירור (מקרר) מרגע הייצור ועד רגע ההזרקה."
+      }
+    ]
+  },
+  {
+    indexLabel: "דלת 7: לוח זמנים למנה השנייה",
+    question: "משה קיבל את המנה הראשונה של חיסון ה-Shingrix כעת. מתי עליך לתאם איתו את קבלת המנה השנייה להשלמת סדרת החיסון?",
+    doors: [
+      {
+        answer: "במרווח של 4 שבועות בדיוק (חודש אחד) מהמנה הראשונה.",
+        correct: false,
+        explanation: "לא מדויק. מרווח של 4 שבועות הוא המינימום האפשרי למדוכאי חיסון קשים שצריכים הגנה מזורזת, אך זהו אינו הפרוטוקול הסטנדרטי למשה."
+      },
+      {
+        answer: "שנה שלמה (12 חודשים) לאחר מתן המנה הראשונה.",
+        correct: false,
+        explanation: "לא נכון. מרווח של שנה הוא ארוך מדי ועלול לפגוע ביעילות התגובה החיסונית המצטברת של הגוף."
+      },
+      {
+        answer: "במרווח של 2 עד 6 חודשים מקבלת המנה הראשונה 🗝️",
+        correct: true,
+        explanation: "נכון מאוד! הפרוטוקול המקובל לאדם בריא מעל גיל 50 הוא שתי מנות בהפרש של 2 עד 6 חודשים. אם חלף יותר זמן, יש לתת את המנה השנייה בהקדם (אין צורך להתחיל את הסדרה מחדש)."
+      }
+    ]
+  },
+  {
+    indexLabel: "דלת 8: שילוב חיסונים בו-זמנית",
+    question: "משה מעוניין לנצל את הגעתו למרפאה ולקבל באותו יום גם את חיסון השפעת העונתי שלו. מהי ההנחיה הנכונה לגבי שילוב Shingrix עם חיסונים אחרים?",
+    doors: [
+      {
+        answer: "ניתן לתת את החיסון בו-זמנית עם חיסון שפעת, אך יש להזריקם בגפיים שונות (או בהפרש של 2.5 ס\"מ לפחות) 🗝️",
+        correct: true,
+        explanation: "מצוין, עברת את האתגר! ניתן לשלב Shingrix עם כל חיסון מומת אחר בו-זמנית. הדרישה היא להזריק בגפיים שונות, או להפריד בטווח של 2.5 ס\"מ לפחות אם מזריקים באותה זרוע."
+      },
+      {
+        answer: "אסור לשלב. יש להמתין מרווח בטיחות של 14 יום לפחות בין מתן Shingrix לכל חיסון אחר.",
+        correct: false,
+        explanation: "לא נכון. מכיוון ש-Shingrix הוא חיסון מומת רקומביננטי, אין שום מגבלת מרווח זמנים בינו לבין חיסונים אחרים (מומתים או חיים)."
+      },
+      {
+        answer: "ניתן לשלבם, ומותר לשאוב את תרכיב השפעת ותרכיב ה-Shingrix לאותו מזרק כדי לחסוך דקירה.",
+        correct: false,
+        explanation: "שגיאה חמורה! לעולם אין לערבב תכשירים שונים באותו מזרק אלא אם כן הדבר צוין במפורש על ידי היצרן. יש להשתמש במזרקים נפרדים ובאתרי הזרקה נפרדים."
+      }
     ]
   }
 ];
@@ -153,118 +248,45 @@ function playSound(type) {
     gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
     osc.start(now);
     osc.stop(now + 0.3);
-  } else if (type === 'tick') {
-    // Mechanical click tick
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(900, now);
-    gain.gain.setValueAtTime(0.05, now);
-    gain.gain.linearRampToValueAtTime(0.005, now + 0.02);
-    osc.start(now);
-    osc.stop(now + 0.02);
   }
 }
 
 // DOM Elements
 const elements = {
-  // Screens
   screenIntro: document.getElementById('screen-intro'),
   screenRooms: document.getElementById('screen-rooms'),
   screenVictory: document.getElementById('screen-victory'),
-  
-  // HUD
   hud: document.getElementById('game-hud'),
-  currentRoomName: document.getElementById('current-room-name'),
+  currentDoorIndicator: document.getElementById('current-door-indicator'),
   btnToggleSound: document.getElementById('btn-toggle-sound'),
   svgVolumeOn: document.getElementById('svg-volume-on'),
   svgVolumeOff: document.getElementById('svg-volume-off'),
-  hudDots: document.querySelectorAll('.room-dots .dot'),
+  hudDotsContainer: document.getElementById('hud-dots-container'),
   
-  // Clues Sidebar
-  btnOpenClues: document.getElementById('btn-open-clues'),
-  btnCloseClues: document.getElementById('btn-close-clues'),
-  cluesPanel: document.getElementById('clues-panel'),
-  cluesOverlay: document.getElementById('clues-overlay'),
-  clueItems: document.querySelectorAll('.clue-content-item'),
+  // Game Play elements
+  questionIndexLabel: document.getElementById('question-index-label'),
+  questionText: document.getElementById('question-text'),
+  doorsContainer: document.getElementById('doors-container'),
+  feedbackPanel: document.getElementById('feedback-panel'),
+  feedbackText: document.getElementById('feedback-text'),
+  feedbackActionArea: document.getElementById('feedback-action-area'),
+  btnNextQuestion: document.getElementById('btn-next-question'),
   
-  // Player name
-  playerNameInput: null, // to be created / referenced
+  // Player name inputs
+  playerNameInput: document.getElementById('player-name-input'),
+  certRecipientName: document.getElementById('cert-recipient-name'),
+  certDateVal: document.getElementById('cert-date-val'),
   
-  // Room 1 Elements
-  room1: document.getElementById('room-1'),
-  hr10: document.getElementById('hr-10'),
-  hr610: document.getElementById('hr-6-10'),
-  hr5: document.getElementById('hr-5'),
-  safeIndicator: document.getElementById('safe-indicator'),
-  btnSubmitRoom1: document.getElementById('btn-submit-room1'),
-  
-  // Room 2 Elements
-  room2: document.getElementById('room-2'),
-  wordChips: document.querySelectorAll('.word-chip'),
-  btnNextMinicogStep: document.getElementById('btn-next-minicog-step'),
-  minicogStepWords: document.getElementById('minicog-step-words'),
-  minicogStepClock: document.getElementById('minicog-step-clock'),
-  handHour: document.getElementById('hand-hour'),
-  handMinute: document.getElementById('hand-minute'),
-  hourVal: document.getElementById('hour-val'),
-  minuteVal: document.getElementById('minute-val'),
-  btnRotateHands: document.querySelectorAll('.btn-rotate'),
-  selectMinicogScore: document.getElementById('select-minicog-score'),
-  btnSubmitRoom2: document.getElementById('btn-submit-room2'),
-  
-  // Room 3 Elements
-  room3: document.getElementById('room-3'),
-  selectCgm: document.getElementById('select-cgm'),
-  selectAid: document.getElementById('select-aid'),
-  selectHcl: document.getElementById('select-hcl'),
-  selectWisdmConclusion: document.getElementById('select-wisdm-conclusion'),
-  selectWisdmFactors: document.getElementById('select-wisdm-factors'),
-  btnSubmitRoom3: document.getElementById('btn-submit-room3'),
-  
-  // Room 4 Elements
-  room4: document.getElementById('room-4'),
-  barrierStatement: document.getElementById('barrier-statement'),
-  doctorReply: document.getElementById('doctor-reply'),
-  optionsContainer: document.getElementById('barrier-options-container'),
-  btnSubmitRoom4: document.getElementById('btn-submit-room4'),
-  barrierNodes: document.querySelectorAll('.barrier-node'),
-  
-  // Room 5 Elements
-  room5: document.getElementById('room-5'),
-  vaccineVial: document.getElementById('vaccine-vial'),
-  storageBoxes: document.querySelectorAll('.storage-box'),
-  reconstitutePanel: document.getElementById('reconstitute-panel'),
-  btnMixVials: document.getElementById('btn-mix-vials'),
-  btnShakeVial: document.getElementById('btn-shake-vial'),
-  fluidState: document.getElementById('fluid-state'),
-  vaccineQuizPanel: document.getElementById('vaccine-quiz-panel'),
-  quizInterval: document.getElementById('quiz-interval'),
-  quizCoadmin: document.getElementById('quiz-coadmin'),
-  quizBasket: document.getElementById('quiz-basket'),
-  btnSubmitRoom5: document.getElementById('btn-submit-room5'),
-  
-  // Victory Screen Elements
+  // General actions
+  btnStartGame: document.getElementById('btn-start-game'),
   btnRestart: document.getElementById('btn-restart'),
-  btnPrintCert: document.getElementById('btn-print-cert'),
-  certDateVal: document.getElementById('cert-date-val')
+  btnPrintCert: document.getElementById('btn-print-cert')
 };
 
 // Initialize Application
 function init() {
   setupEventListeners();
-  
-  // Add Name input dynamically to Intro Screen
-  const introCard = elements.screenIntro.querySelector('.glass-card');
-  const startBtn = document.getElementById('btn-start-game');
-  
-  const nameInputGroup = document.createElement('div');
-  nameInputGroup.className = 'name-input-group';
-  nameInputGroup.style.marginBottom = '20px';
-  nameInputGroup.innerHTML = `
-    <label for="player-name-input" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted);">הזן את שמך (יופיע על גבי התעודה בסיום):</label>
-    <input type="text" id="player-name-input" value="דר' דנה" placeholder="השם שלך" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 14px; border-radius: 8px; font-family: var(--font-primary); font-size: 1.1rem; text-align: center; width: 100%; max-width: 300px; outline: none; transition: border-color 0.3s; direction: rtl;">
-  `;
-  introCard.insertBefore(nameInputGroup, startBtn);
-  elements.playerNameInput = document.getElementById('player-name-input');
+  generateHUDDots();
   
   // Update certificate date to current year/month
   const now = new Date();
@@ -272,27 +294,52 @@ function init() {
   elements.certDateVal.innerText = `${months[now.getMonth()]} ${now.getFullYear()}`;
 }
 
-// Event Listeners Registration
+// Generate the 8 dots in HUD
+function generateHUDDots() {
+  elements.hudDotsContainer.innerHTML = '';
+  for (let i = 0; i < questionsData.length; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.setAttribute('data-question', i);
+    elements.hudDotsContainer.appendChild(dot);
+  }
+}
+
+// Update the HUD displays
+function updateHUD() {
+  elements.currentDoorIndicator.innerText = `דלת ${state.currentQuestionIndex + 1} מתוך ${questionsData.length}`;
+  
+  const dots = elements.hudDotsContainer.querySelectorAll('.dot');
+  dots.forEach((dot, idx) => {
+    dot.className = 'dot';
+    if (idx === state.currentQuestionIndex) {
+      dot.classList.add('active');
+    } else if (state.completedQuestions.has(idx)) {
+      dot.classList.add('completed');
+    }
+  });
+}
+
+// Event Listeners Setup
 function setupEventListeners() {
-  // Start Game
-  document.getElementById('btn-start-game').addEventListener('click', () => {
+  // Start Game click
+  elements.btnStartGame.addEventListener('click', () => {
     playSound('click');
     if (elements.playerNameInput && elements.playerNameInput.value.trim() !== "") {
       state.playerName = elements.playerNameInput.value.trim();
     }
-    
-    // Update player name in certificate
-    const certName = document.querySelector('.cert-name');
-    if (certName) {
-      certName.innerText = `מוענקת בזאת ל-${state.playerName}`;
-    }
+    elements.certRecipientName.innerText = `מוענקת בזאת ל-${state.playerName}`;
     
     showScreen(elements.screenRooms);
     elements.hud.classList.remove('hidden');
-    loadRoom(1);
+    
+    state.currentQuestionIndex = 0;
+    state.completedQuestions.clear();
+    generateHUDDots();
+    loadQuestion(0);
   });
   
-  // Sound Toggle
+  // Sound toggle click
   elements.btnToggleSound.addEventListener('click', () => {
     state.soundEnabled = !state.soundEnabled;
     if (state.soundEnabled) {
@@ -305,196 +352,34 @@ function setupEventListeners() {
     }
   });
 
-  // Clues Sidebar triggers
-  elements.btnOpenClues.addEventListener('click', openClues);
-  elements.btnCloseClues.addEventListener('click', closeClues);
-  elements.cluesOverlay.addEventListener('click', closeClues);
-
-  // Room 1 Dials Logic
-  elements.btnSubmitRoom1.addEventListener('click', validateRoom1);
-  
-  // Room 2 Mini-Cog Logic
-  // Word chips selection
-  elements.wordChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      playSound('click');
-      const word = chip.getAttribute('data-word');
-      if (state.selectedWords.has(word)) {
-        state.selectedWords.delete(word);
-        chip.classList.remove('selected');
-      } else {
-        if (state.selectedWords.size < 2) {
-          state.selectedWords.add(word);
-          chip.classList.add('selected');
-        } else {
-          // If already 2 selected, remove the oldest one
-          const firstSelected = state.selectedWords.values().next().value;
-          state.selectedWords.delete(firstSelected);
-          document.querySelector(`.word-chip[data-word="${firstSelected}"]`).classList.remove('selected');
-          
-          state.selectedWords.add(word);
-          chip.classList.add('selected');
-        }
-      }
-      
-      // Enable next step if 2 words selected
-      elements.btnNextMinicogStep.disabled = (state.selectedWords.size !== 2);
-    });
-  });
-  
-  elements.btnNextMinicogStep.addEventListener('click', () => {
+  // Next question click
+  elements.btnNextQuestion.addEventListener('click', () => {
     playSound('click');
-    elements.minicogStepWords.classList.add('hidden');
-    elements.minicogStepWords.classList.remove('active');
-    elements.minicogStepClock.classList.remove('hidden');
-    elements.minicogStepClock.classList.add('active');
-    elements.btnSubmitRoom2.classList.remove('hidden');
-  });
-
-  // Clock rotate buttons
-  elements.btnRotateHands.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const hand = btn.getAttribute('data-hand');
-      const dir = btn.getAttribute('data-dir');
-      playSound('tick');
-      
-      if (hand === 'hour') {
-        const delta = (dir === 'cw') ? 30 : -30;
-        state.hourAngle = (state.hourAngle + delta + 360) % 360;
-        updateClockDisplay();
-      } else if (hand === 'minute') {
-        const delta = (dir === 'cw') ? 30 : -30;
-        state.minuteAngle = (state.minuteAngle + delta + 360) % 360;
-        updateClockDisplay();
-      }
-    });
-  });
-
-  elements.btnSubmitRoom2.addEventListener('click', validateRoom2);
-
-  elements.btnSubmitRoom3.addEventListener('click', validateRoom3);
-
-  // Room 4 Barrier bypass triggers
-  elements.btnSubmitRoom4.addEventListener('click', () => {
-    playSound('click');
-    loadRoom(5);
-  });
-
-  // Room 5 Vaccine Drag & Drop (with Mobile Tap-to-Place fallback)
-  elements.vaccineVial.addEventListener('dragstart', (e) => {
-    e.dataTransfer.setData('text/plain', 'vaccine');
-    elements.vaccineVial.classList.add('dragged');
-  });
-
-  elements.vaccineVial.addEventListener('dragend', () => {
-    elements.vaccineVial.classList.remove('dragged');
-  });
-
-  // Mobile Tap-to-Place support
-  elements.vaccineVial.addEventListener('click', () => {
-    playSound('click');
-    state.selectedVialForTap = !state.selectedVialForTap;
-    if (state.selectedVialForTap) {
-      elements.vaccineVial.style.border = '2px solid var(--success-neon)';
-      elements.vaccineVial.style.boxShadow = '0 0 15px var(--success-glow)';
+    const nextIndex = state.currentQuestionIndex + 1;
+    if (nextIndex < questionsData.length) {
+      loadQuestion(nextIndex);
     } else {
-      elements.vaccineVial.style.border = '2px dashed var(--primary-neon)';
-      elements.vaccineVial.style.boxShadow = 'none';
+      // Completed all questions! Show Victory!
+      showScreen(elements.screenVictory);
+      elements.hud.classList.add('hidden');
+      playSound('success');
     }
   });
 
-  elements.storageBoxes.forEach(box => {
-    box.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      box.classList.add('dragover');
-    });
-
-    box.addEventListener('dragleave', () => {
-      box.classList.remove('dragover');
-    });
-
-    box.addEventListener('drop', (e) => {
-      e.preventDefault();
-      box.classList.remove('dragover');
-      const data = e.dataTransfer.getData('text/plain');
-      
-      if (data === 'vaccine') {
-        handleVaccinePlacement(box);
-      }
-    });
-
-    // Mobile click-to-place handler
-    box.addEventListener('click', () => {
-      if (state.selectedVialForTap) {
-        handleVaccinePlacement(box);
-      }
-    });
-  });
-
-  function handleVaccinePlacement(box) {
-    const temp = parseInt(box.getAttribute('data-temp'), 10);
-    if (temp === 4) { // Fridge is 2-8 degrees
-      playSound('success');
-      state.vaccineStoredCorrectly = true;
-      box.innerHTML = `<span class="box-title highlight-green">החיסון מאוחסן בבטחה במקרר (4°C) ❄️</span>`;
-      elements.vaccineVial.style.display = 'none';
-      elements.reconstitutePanel.classList.remove('hidden');
-      state.selectedVialForTap = false;
-    } else {
-      playSound('error');
-      alert("טמפרטורה לא מתאימה! החיסון רקומביננטי ודורש אחסון במקרר בטמפרטורה של 2-8 מעלות צלזיוס בלבד. הקפאה או השארה בטמפרטורת החדר יפגעו ביעילות התכשיר.");
-      elements.vaccineVial.style.border = '2px dashed var(--primary-neon)';
-      elements.vaccineVial.style.boxShadow = 'none';
-      state.selectedVialForTap = false;
-    }
-  }
-
-  // Vaccine mixing logic
-  elements.btnMixVials.addEventListener('click', () => {
-    playSound('click');
-    elements.btnMixVials.classList.add('hidden');
-    elements.btnShakeVial.classList.remove('hidden');
-    elements.fluidState.innerText = 'שולב (דרוש ניעור)';
-    elements.fluidState.className = 'highlight-orange';
-  });
-
-  elements.btnShakeVial.addEventListener('click', () => {
-    playSound('click');
-    const container = document.querySelector('.vaccine-section');
-    container.style.animation = 'shake 0.5s infinite';
-    elements.btnShakeVial.disabled = true;
-    
-    setTimeout(() => {
-      container.style.animation = '';
-      playSound('success');
-      state.vaccineShaken = true;
-      elements.btnShakeVial.classList.add('hidden');
-      elements.fluidState.innerText = 'מוכן להזרקה (נוזל צלול, שקוף עד חום בהיר)';
-      elements.fluidState.className = 'highlight-green';
-      elements.vaccineQuizPanel.classList.remove('hidden');
-      checkRoom5QuizStatus();
-    }, 1500);
-  });
-
-  // Quiz events
-  elements.quizInterval.addEventListener('change', checkRoom5QuizStatus);
-  elements.quizCoadmin.addEventListener('change', checkRoom5QuizStatus);
-  elements.quizBasket.addEventListener('change', checkRoom5QuizStatus);
-  elements.btnSubmitRoom5.addEventListener('click', validateRoom5);
-
-  // Victory buttons
+  // Restart click
   elements.btnRestart.addEventListener('click', () => {
     playSound('click');
     location.reload();
   });
 
+  // Print Certificate click
   elements.btnPrintCert.addEventListener('click', () => {
     playSound('click');
     window.print();
   });
 }
 
-// Navigation helpers
+// Navigation helper
 function showScreen(screen) {
   elements.screenIntro.classList.add('hidden');
   elements.screenIntro.classList.remove('active');
@@ -507,328 +392,107 @@ function showScreen(screen) {
   screen.classList.add('active');
 }
 
-function loadRoom(roomNum) {
-  state.currentRoom = roomNum;
+// Load a Question into the view
+function loadQuestion(index) {
+  state.currentQuestionIndex = index;
+  state.activeSelectionActive = true;
+  updateHUD();
   
-  // Hide all rooms
-  elements.room1.classList.add('hidden');
-  elements.room2.classList.add('hidden');
-  elements.room3.classList.add('hidden');
-  elements.room4.classList.add('hidden');
-  elements.room5.classList.add('hidden');
+  const qData = questionsData[index];
   
-  // Show active room
-  const activeRoom = document.getElementById(`room-${roomNum}`);
-  activeRoom.classList.remove('hidden');
+  elements.questionIndexLabel.innerText = qData.indexLabel;
+  elements.questionText.innerText = qData.question;
   
-  // Update HUD
-  const roomNames = {
-    1: "מעבדת האבחון (סיכוני דמנציה)",
-    2: "אומדן קוגניטיבי (Mini-Cog)",
-    3: "היכל הטכנולוגיה (Vitals & WISDM)",
-    4: "מעבר החסמים (קול המטופל)",
-    5: "מקדש החיסונים (Shingrix)"
-  };
-  elements.currentRoomName.innerText = roomNames[roomNum];
+  // Reset feedback panel
+  elements.feedbackPanel.className = 'feedback-panel idles';
+  elements.feedbackText.innerText = "קרא את התרחיש הקליני ובחר בדלת בעלת התשובה הנכונה ביותר...";
+  elements.feedbackActionArea.classList.add('hidden');
   
-  // Update HUD dots
-  elements.hudDots.forEach(dot => {
-    const dotRoom = parseInt(dot.getAttribute('data-room'), 10);
-    dot.className = 'dot';
-    if (dotRoom === roomNum) {
-      dot.classList.add('active');
-    } else if (state.completedRooms.has(dotRoom)) {
-      dot.classList.add('completed');
-    }
+  // Render doors
+  elements.doorsContainer.innerHTML = '';
+  const labels = ['א', 'ב', 'ג'];
+  
+  qData.doors.forEach((door, idx) => {
+    // 3D Door HTML structure
+    const container = document.createElement('div');
+    container.className = 'door-container';
+    
+    container.innerHTML = `
+      <div class="door-card" id="door-card-${idx}">
+        <!-- Door Front -->
+        <div class="door-front">
+          <div class="door-panel">
+            <div class="door-handle"></div>
+            <div class="door-number">דלת ${labels[idx]}</div>
+            <div class="door-text-plate">${door.answer}</div>
+          </div>
+        </div>
+        <!-- Door Back (Revealed on Open) -->
+        <div class="door-back">
+          <div class="door-light-glowing"></div>
+          <div class="door-success-seal">🔓</div>
+        </div>
+      </div>
+    `;
+    
+    // Add Click listener to the door card
+    container.addEventListener('click', () => {
+      if (!state.activeSelectionActive) return;
+      handleDoorSelection(idx, door);
+    });
+    
+    elements.doorsContainer.appendChild(container);
   });
-  
-  // If Room 4, load initial barrier
-  if (roomNum === 4) {
-    state.currentBarrierIndex = 0;
-    loadBarrierStatement();
-  }
 }
 
-// Clues Sidebar Actions
-function openClues() {
-  playSound('click');
-  elements.cluesPanel.classList.remove('closed');
-  elements.cluesPanel.classList.add('open');
-  elements.cluesOverlay.classList.remove('hidden');
+// Handle clicking a door
+function handleDoorSelection(doorIdx, doorData) {
+  const card = document.getElementById(`door-card-${doorIdx}`);
   
-  // Hide all clue items first
-  elements.clueItems.forEach(item => item.classList.add('hidden'));
-  
-  // Show clue item corresponding to current room
-  const activeClue = document.getElementById(`clue-content-room${state.currentRoom}`);
-  if (activeClue) {
-    activeClue.classList.remove('hidden');
-  }
-}
-
-function closeClues() {
-  playSound('click');
-  elements.cluesPanel.classList.remove('open');
-  elements.cluesPanel.classList.add('closed');
-  elements.cluesOverlay.classList.add('hidden');
-}
-
-// --------------------------------------------------------------------------
-// Validation: Room 1 (Dementia Safe)
-// --------------------------------------------------------------------------
-function validateRoom1() {
-  const hr10Val = parseFloat(elements.hr10.value);
-  const hr610Val = parseFloat(elements.hr610.value);
-  const hr5Val = parseFloat(elements.hr5.value);
-  
-  // Expected values: hr10 = 2.12, hr6-10 = 1.49, hr5 = 1.11
-  // We allow a small tolerance of 0.02
-  const tolerance = 0.02;
-  const isHr10Correct = Math.abs(hr10Val - 2.12) <= tolerance;
-  const isHr610Correct = Math.abs(hr610Val - 1.49) <= tolerance;
-  const isHr5Correct = Math.abs(hr5Val - 1.11) <= tolerance;
-  
-  if (isHr10Correct && isHr610Correct && isHr5Correct) {
+  if (doorData.correct) {
+    state.activeSelectionActive = false; // block clicks
     playSound('unlock');
-    elements.safeIndicator.innerText = "כספת נפתחה בהצלחה! 🔓";
-    elements.safeIndicator.className = "indicator unlocked";
     
-    state.completedRooms.add(1);
-    elements.btnSubmitRoom1.disabled = true;
+    // Apply 3D swing open animation
+    card.classList.add('door-opened');
     
-    setTimeout(() => {
-      loadRoom(2);
-    }, 1500);
-  } else {
-    playSound('error');
-    elements.safeIndicator.innerText = "קוד כספת שגוי! בדוק את יחסי הסיכון במצגת 🔒";
-    elements.safeIndicator.className = "indicator locked";
-    
-    // Highlight incorrect inputs
-    highlightInput(elements.hr10, !isHr10Correct);
-    highlightInput(elements.hr610, !isHr610Correct);
-    highlightInput(elements.hr5, !isHr5Correct);
-  }
-}
-
-function highlightInput(inputElement, isIncorrect) {
-  if (isIncorrect) {
-    inputElement.style.borderColor = 'var(--alert-neon)';
-    inputElement.style.boxShadow = '0 0 8px var(--alert-glow)';
-  } else {
-    inputElement.style.borderColor = 'var(--success-neon)';
-    inputElement.style.boxShadow = '0 0 8px var(--success-glow)';
-  }
-}
-
-// --------------------------------------------------------------------------
-// Validation: Room 2 (Mini-Cog)
-// --------------------------------------------------------------------------
-function updateClockDisplay() {
-  // Update rotation in SVG
-  elements.handHour.setAttribute('transform', `rotate(${state.hourAngle}, 100, 100)`);
-  elements.handMinute.setAttribute('transform', `rotate(${state.minuteAngle}, 100, 100)`);
-  
-  // Calculate display string
-  // Hour hand angle 330 is 11 o'clock. 0 is 12 o'clock, 30 is 1 o'clock.
-  let hour = Math.round(state.hourAngle / 30);
-  if (hour === 0) hour = 12;
-  
-  // Minute hand: 360 degrees = 60 minutes. So 1 minute = 6 degrees.
-  const minutes = Math.round(state.minuteAngle / 6);
-  const minStr = minutes.toString().padStart(2, '0');
-  
-  elements.hourVal.innerText = `${hour.toString().padStart(2, '0')}:${minStr}`;
-  elements.minuteVal.innerText = `:${minStr}`;
-}
-
-function validateRoom2() {
-  // 1. Verify words selected: must select "sunrise" and "chair"
-  const isWordsCorrect = state.selectedWords.has('sunrise') && state.selectedWords.has('chair') && state.selectedWords.size === 2;
-  
-  // 2. Verify clock rotation: Minute hand should be at 10 past (60 degrees), Hour hand should be at 11 (330 degrees)
-  const isClockCorrect = (state.minuteAngle === 60) && (state.hourAngle === 330);
-  
-  // 3. Verify selected score: should be "4" (2 points for words, 2 points for clock)
-  const scoreVal = elements.selectMinicogScore.value;
-  const isScoreCorrect = (scoreVal === "4");
-  
-  if (isWordsCorrect && isClockCorrect && isScoreCorrect) {
-    playSound('success');
-    state.completedRooms.add(2);
-    elements.btnSubmitRoom2.disabled = true;
-    
-    alert("מעולה! משה הציג הערכה קוגניטיבית תקינה לחלוטין (ציון 4 מתוך 5). הוא כשיר ומוכן לחיבור לטכנולוגיות ניטור והזלפה מתקדמות!");
-    
-    setTimeout(() => {
-      loadRoom(3);
-    }, 1000);
-  } else {
-    playSound('error');
-    
-    let errMsg = "חלק מהערכי האומדן אינם נכונים:\n";
-    if (!isWordsCorrect) errMsg += "- שחזור המילים אינו מתאים (משה זכר 2 מילים ספציפיות).\n";
-    if (!isClockCorrect) errMsg += "- מחוגי השעון אינם מכוונים נכון ל-11:10 (שעה 11, דקה 10).\n";
-    if (isClockCorrect && isWordsCorrect && !isScoreCorrect) errMsg += "- חישוב הציון הסופי שגוי (השעון תקין = 2 נק', 2 מילים = 2 נק').\n";
-    
-    alert(errMsg + "\nאנא העזר בשקופיות הרמז ונסה שוב.");
-  }
-}
-
-// --------------------------------------------------------------------------
-// Validation: Room 3 (Technology & WISDM)
-// --------------------------------------------------------------------------
-function validateRoom3() {
-  // 1. Validate acronym match selectors
-  const isCgmMatch = elements.selectCgm.value === 'cgm';
-  const isAidMatch = elements.selectAid.value === 'aid';
-  const isHclMatch = elements.selectHcl.value === 'hcl';
-  
-  // 2. Validate WISDM study questions
-  const isConclusionCorrect = elements.selectWisdmConclusion.value === 'correct';
-  const isFactorsCorrect = elements.selectWisdmFactors.value === 'correct';
-  
-  if (isCgmMatch && isAidMatch && isHclMatch && isConclusionCorrect && isFactorsCorrect) {
-    playSound('success');
-    state.completedRooms.add(3);
-    elements.btnSubmitRoom3.disabled = true;
-    
-    alert("המערכת הוגדרה בהצלחה! הבנת היטב את ממצאי מחקר ה-WISDM: ניטור סוכר רציף (CGM) מפחית משמעותית אירועי היפוגליקמיה במבוגרים, ותועלת זו עקבית לכולם ואינה תלויה בגיל או במצב קוגניטיבי!");
-    
-    setTimeout(() => {
-      loadRoom(4);
-    }, 1000);
-  } else {
-    playSound('error');
-    let errMsg = "חלק מההגדרות שגויות:\n";
-    if (!isCgmMatch || !isAidMatch || !isHclMatch) errMsg += "- שיוך ראשי התיבות אינו מדויק.\n";
-    if (!isConclusionCorrect) errMsg += "- התשובה לשאלה 1 לגבי יעילות ה-CGM אינה נכונה.\n";
-    if (!isFactorsCorrect) errMsg += "- התשובה לשאלה 2 לגבי השפעת מאפייני המטופל אינה נכונה.\n";
-    
-    alert(errMsg + "\nעיין בשקופיות הרמז ונסה שוב.");
-  }
-}
-
-// --------------------------------------------------------------------------
-// Validation: Room 4 (Barriers Bypass)
-// --------------------------------------------------------------------------
-function loadBarrierStatement() {
-  const barrier = barriersData[state.currentBarrierIndex];
-  elements.barrierStatement.innerText = `"${barrier.statement}"`;
-  elements.doctorReply.classList.add('hidden');
-  
-  // Render options in randomized order
-  const shuffledOptions = [...barrier.options].sort(() => Math.random() - 0.5);
-  elements.optionsContainer.innerHTML = '';
-  
-  shuffledOptions.forEach(optionText => {
-    const btn = document.createElement('button');
-    btn.className = 'barrier-option-btn';
-    btn.innerText = optionText;
-    btn.addEventListener('click', () => handleBarrierAnswer(btn, optionText));
-    elements.optionsContainer.appendChild(btn);
-  });
-  
-  // Update progress nodes classes
-  elements.barrierNodes.forEach((node, idx) => {
-    node.className = 'barrier-node';
-    if (idx === state.currentBarrierIndex) {
-      node.classList.add('active');
-    } else if (idx < state.currentBarrierIndex) {
-      node.classList.add('completed');
-    }
-  });
-}
-
-function handleBarrierAnswer(btnElement, selectedAnswer) {
-  const barrier = barriersData[state.currentBarrierIndex];
-  
-  if (selectedAnswer === barrier.correctAnswer) {
-    playSound('success');
-    btnElement.style.borderColor = 'var(--success-neon)';
-    btnElement.style.background = 'rgba(0, 245, 212, 0.15)';
-    btnElement.style.color = '#fff';
-    
-    // Disable all options
-    const allButtons = elements.optionsContainer.querySelectorAll('button');
-    allButtons.forEach(b => b.disabled = true);
-    
-    // Show Doctor Reply bubble
-    elements.doctorReply.innerText = `מעולה! המענה מתאים ביותר. פתרנו את חסם ה"${barrier.title}".`;
-    elements.doctorReply.classList.remove('hidden');
-    
-    setTimeout(() => {
-      state.currentBarrierIndex++;
-      if (state.currentBarrierIndex < barriersData.length) {
-        loadBarrierStatement();
-      } else {
-        // Completed all barriers!
-        state.completedRooms.add(4);
-        elements.btnSubmitRoom4.disabled = false;
-        elements.optionsContainer.innerHTML = '<p class="highlight-green text-center" style="font-size: 1.2rem; padding: 20px;">פירקת בהצלחה את כל 5 חסמי הטכנולוגיה של משה! הוא רתום ומלא ביטחון. 👴💖</p>';
-        elements.barrierStatement.innerText = "תודה לך, דוקטור! כעת אני מרגיש בטוח ומבין לגמרי כיצד הכלים הללו ישפרו את איכות החיים שלי!";
-        
-        // Mark all nodes completed
-        elements.barrierNodes.forEach(node => {
-          node.className = 'barrier-node completed';
-        });
+    // Disable incorrect doors styling
+    const allContainers = elements.doorsContainer.querySelectorAll('.door-card');
+    allContainers.forEach((c, idx) => {
+      if (idx !== doorIdx) {
+        c.style.opacity = '0.4';
+        c.style.pointerEvents = 'none';
       }
-    }, 1800);
+    });
+
+    // Update state & HUD
+    state.completedQuestions.add(state.currentQuestionIndex);
+    updateHUD();
+    
+    // Show success feedback
+    elements.feedbackPanel.className = 'feedback-panel correct fade-in';
+    elements.feedbackText.innerHTML = `<strong>נכון מאוד! 🎉</strong><br>${doorData.explanation}`;
+    elements.feedbackActionArea.classList.remove('hidden');
   } else {
     playSound('error');
-    btnElement.classList.add('wrong');
+    
+    // Apply shake animation to door front
+    card.classList.add('door-locked-shake');
     setTimeout(() => {
-      btnElement.classList.remove('wrong');
+      card.classList.remove('door-locked-shake');
     }, 500);
+    
+    // Style this door container as wrong
+    card.querySelector('.door-panel').style.borderColor = 'var(--alert-neon)';
+    card.querySelector('.door-panel').style.boxShadow = '0 0 15px var(--alert-glow)';
+    
+    // Show error feedback with explanation
+    elements.feedbackPanel.className = 'feedback-panel incorrect fade-in';
+    elements.feedbackText.innerHTML = `<strong>דלת נעולה 🔒</strong><br>${doorData.explanation}`;
   }
 }
 
-// --------------------------------------------------------------------------
-// Validation: Room 5 (Shingrix vaccine)
-// --------------------------------------------------------------------------
-function checkRoom5QuizStatus() {
-  // Enable submit button only if:
-  // 1. Vaccine stored correctly (fridge)
-  // 2. Reconstituted and shaken
-  // 3. All quiz selectors answered (not empty)
-  const isStored = state.vaccineStoredCorrectly;
-  const isReady = state.vaccineShaken;
-  const isIntervalSelect = elements.quizInterval.value !== "";
-  const isCoadminSelect = elements.quizCoadmin.value !== "";
-  const isBasketSelect = elements.quizBasket.value !== "";
-  
-  elements.btnSubmitRoom5.disabled = !(isStored && isReady && isIntervalSelect && isCoadminSelect && isBasketSelect);
-}
-
-function validateRoom5() {
-  const isIntervalCorrect = elements.quizInterval.value === '2-6months';
-  const isCoadminCorrect = elements.quizCoadmin.value === 'simultaneous';
-  const isBasketCorrect = elements.quizBasket.value === 'yes';
-  
-  if (isIntervalCorrect && isCoadminCorrect && isBasketCorrect) {
-    playSound('success');
-    state.completedRooms.add(5);
-    elements.btnSubmitRoom5.disabled = true;
-    
-    alert("החיסון בוצע בהצלחה! משה קיבל מנה ראשונה של Shingrix, תואם מרווח של 2-6 חודשים למנה השנייה, והחיסון סומן כמאושר בסל הבריאות לגילו!");
-    
-    setTimeout(() => {
-      // Trigger victory screen
-      showScreen(elements.screenVictory);
-      elements.hud.classList.add('hidden');
-    }, 1200);
-  } else {
-    playSound('error');
-    let errMsg = "חלק מההנחיות הקליניות בפרוטוקול החיסון שגויות:\n";
-    if (!isIntervalCorrect) errMsg += "- לוח הזמנים למנה השנייה שגוי (מבוגר ללא דיכוי חיסוני).\n";
-    if (!isCoadminCorrect) errMsg += "- הנחיית שילוב החיסונים שגויה.\n";
-    if (!isBasketCorrect) errMsg += "- הגדרת הזכאות של משה בסל הבריאות שגויה.\n";
-    
-    alert(errMsg + "\nאנא עיין בהנחיות משרד הבריאות ברמז ונסה שוב.");
-  }
-}
-
-// Global start
+// Auto start
 window.addEventListener('DOMContentLoaded', () => {
   init();
 });

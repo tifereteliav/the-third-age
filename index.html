@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>הבריחה מגיל הזקנה הטכנולוגי | אתגר הסוכרת והשלבקת</title>
-  <!-- Google Fonts: Inter & Assistant for premium typography -->
+  <title>הבריחה מגיל הזקנה הטכנולוגי | אתגר הדלתות התלת-ממדיות</title>
+  <!-- Google Fonts: Assistant for Hebrew, Inter for English -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,26 +22,16 @@
         <span class="hud-value highlight">משה, בן 68</span>
       </div>
       <div class="hud-item progress-tracker">
-        <span class="hud-label">שלב:</span>
-        <span id="current-room-name" class="hud-value">מעבדת האבחון</span>
-        <div class="room-dots">
-          <span class="dot active" data-room="1"></span>
-          <span class="dot" data-room="2"></span>
-          <span class="dot" data-room="3"></span>
-          <span class="dot" data-room="4"></span>
-          <span class="dot" data-room="5"></span>
+        <span class="hud-label">מיקום:</span>
+        <span id="current-door-indicator" class="hud-value">דלת 1 מתוך 8</span>
+        <div class="room-dots" id="hud-dots-container">
+          <!-- Dots generated dynamically in app.js -->
         </div>
       </div>
       <div class="hud-item sound-control">
         <button id="btn-toggle-sound" class="btn-icon" title="השתק/הפעל קול">
           <svg id="svg-volume-on" class="icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
           <svg id="svg-volume-off" class="icon hidden" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-        </button>
-      </div>
-      <div class="hud-item clue-trigger">
-        <button id="btn-open-clues" class="btn btn-secondary">
-          <span class="pulse-ring"></span>
-          💡 רמז קליני (שקופית)
         </button>
       </div>
     </header>
@@ -54,395 +44,57 @@
         <div class="glass-card text-center fade-in">
           <div class="card-badge">אתגר אינטראקטיבי לגיל השלישי</div>
           <h1 class="game-title">הבריחה מגיל הזקנה הטכנולוגי</h1>
-          <p class="game-subtitle">מסע קליני אינטראקטיבי לשיפור הטיפול בסוכרת ומניעת שלבקת חוגרת</p>
+          <p class="game-subtitle">פתור את שמונת שלבי האתגר הרפואי והטכנולוגי כדי לפתוח את הדלתות ולהוביל את משה לטיפול בטוח!</p>
           
           <div class="patient-briefing">
             <h3>תיק מטופל: משה שרעבי (בן 68)</h3>
             <div class="briefing-grid">
               <div class="briefing-item">
-                <strong>מצב רפואי:</strong> סוכרת סוג 2 מזה 12 שנים (פרוץ מחלה בגיל 56). לא מאוזן באופן מיטבי (HbA1c 8.2%).
+                <strong>מצב רפואי:</strong> סוכרת סוג 2 מזה 12 שנים (פרוץ בגיל 56). לא מאוזן באופן מיטבי (HbA1c 8.2%). מועמד לניטור רציף (CGM).
               </div>
               <div class="briefing-item">
-                <strong>האתגר:</strong> משה מועמד לחיבור למערכת ניטור סוכר רציף (CGM) ומשאבת אינסולין מתקדמת. בנוסף, הוא לא חוסן מעולם נגד שלבקת חוגרת.
+                <strong>האתגר:</strong> משה זקוק להתאמת טכנולוגיה, אומדן קוגניטיבי, מענה על חששות אישיים ומתן חיסון שלבקת חוגרת (Shingrix).
               </div>
             </div>
             <p class="mission-text">
-              <strong>המשימה שלך:</strong> כמתאמת סוכרת, עליך לעבור דרך 5 חדרים בקליניקה, לפתור את האתגרים הקליניים והטכנולוגיים, ולהבטיח שמשה יקבל את הטיפול וההגנה הטובים ביותר.
+              <strong>המשימה:</strong> הקשב להרצאה וענה על שאלות האתגר בזמן אמת. בכל שלב, עליך <strong>לבחור ולפתוח את הדלת הנכונה</strong> כדי להתקדם במסדרון הקליניקה.
             </p>
           </div>
 
-          <button id="btn-start-game" class="btn btn-primary btn-large">התחל באתגר 🚪</button>
+          <div class="name-input-group" style="margin-bottom: 20px;">
+            <label for="player-name-input" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted);">הזן את שמך (יופיע על גבי תעודת המומחה בסיום):</label>
+            <input type="text" id="player-name-input" value="דר' דנה" placeholder="השם שלך" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 14px; border-radius: 8px; font-family: var(--font-primary); font-size: 1.1rem; text-align: center; width: 100%; max-width: 300px; outline: none; transition: border-color 0.3s; direction: rtl;">
+          </div>
+
+          <button id="btn-start-game" class="btn btn-primary btn-large">התחל באתגר הדלתות 🚪</button>
         </div>
       </section>
 
-      <!-- SCREEN 2: ROOMS -->
+      <!-- SCREEN 2: GAMEPLAY (DYNAMIC DOORS VIEW) -->
       <section id="screen-rooms" class="screen hidden">
-        
-        <!-- ROOM 1: DEMENTIA RISK SAFE -->
-        <div id="room-1" class="room-view hidden">
-          <div class="glass-card">
-            <h2>חדר 1: מעבדת האבחון <span class="room-subtitle">סיכון קוגניטיבי מול גיל פרוץ הסוכרת</span></h2>
-            <p class="room-desc">מחקר ה-JAMA משנת 2021 הוכיח קשר הדוק בין גיל פרוץ הסוכרת לבין הסיכון העתידי לדמנציה. כדי לפתוח את כספת האומדן הקליני של משה, עליך להזין את <strong>יחסי הסיכון (Hazard Ratios)</strong> המדויקים עבור שלוש קבוצות גיל פרוץ הסוכרת (בהשוואה למטופלים ללא סוכרת בגיל 70):</p>
-            
-            <div class="puzzle-content safe-puzzle">
-              <div class="safe-panel">
-                <div class="safe-dial-group">
-                  <div class="dial-container">
-                    <label>פרוץ סוכרת מעל 10 שנים לפני גיל 70 (HR):</label>
-                    <div class="dial-input-wrapper">
-                      <input type="number" id="hr-10" step="0.01" min="1.00" max="3.00" placeholder="0.00" class="safe-input">
-                      <span class="unit">פי</span>
-                    </div>
-                  </div>
-                  <div class="dial-container">
-                    <label>פרוץ סוכרת בין 6 ל-10 שנים לפני גיל 70 (HR):</label>
-                    <div class="dial-input-wrapper">
-                      <input type="number" id="hr-6-10" step="0.01" min="1.00" max="3.00" placeholder="0.00" class="safe-input">
-                      <span class="unit">פי</span>
-                    </div>
-                  </div>
-                  <div class="dial-container">
-                    <label>פרוץ סוכרת 5 שנים ומטה לפני גיל 70 (HR):</label>
-                    <div class="dial-input-wrapper">
-                      <input type="number" id="hr-5" step="0.01" min="1.00" max="3.00" placeholder="0.00" class="safe-input">
-                      <span class="unit">פי</span>
-                    </div>
-                  </div>
-                </div>
+        <div class="glass-card">
+          <div class="question-header">
+            <span id="question-index-label" class="card-badge">אתגר 1 מתוך 8</span>
+          </div>
+          
+          <!-- Scenario / Question -->
+          <div class="scenario-panel">
+            <h2 id="question-text">טוען שאלה...</h2>
+          </div>
 
-                <div class="safe-status">
-                  <div id="safe-indicator" class="indicator locked">כספת נעולה 🔒</div>
-                </div>
-              </div>
-            </div>
+          <!-- Dynamic 3D Doors Area -->
+          <div class="doors-grid" id="doors-container">
+            <!-- 3 Doors will be generated dynamically here -->
+          </div>
 
-            <div class="action-footer">
-              <button id="btn-submit-room1" class="btn btn-primary">פתח כספת ואבחן 🔓</button>
+          <!-- Feedback & Action Panel -->
+          <div class="feedback-panel idles" id="feedback-panel">
+            <div class="feedback-content" id="feedback-text">בחר את הדלת הנכונה כדי להתקדם...</div>
+            <div class="feedback-action hidden" id="feedback-action-area">
+              <button id="btn-next-question" class="btn btn-primary btn-large">המשך לדלת הבאה ➡️</button>
             </div>
           </div>
         </div>
-
-        <!-- ROOM 2: MINI-COG ASSESSMENT -->
-        <div id="room-2" class="room-view hidden">
-          <div class="glass-card">
-            <h2>חדר 2: מבחן ה-Mini-Cog <span class="room-subtitle">הערכה קוגניטיבית לפני מעבר לטכנולוגיה</span></h2>
-            <p class="room-desc">משה מבוגר וזכאי לטכנולוגיות מתקדמות, אך ההנחיות דורשות ביצוע הערכה קוגניטיבית (מבחן Mini-Cog) לפני החיבור למכשירים (Slide 26). עזור למשה לבצע את המבחן כעת:</p>
-            
-            <div class="puzzle-content minicog-puzzle">
-              
-              <!-- Step 2.1: 3-Word Recall -->
-              <div class="minicog-step active" id="minicog-step-words">
-                <h3>שלב א': זכירת 3 מילים</h3>
-                <p>אמרנו למשה שלוש מילים בתחילת המפגש. כעת שאלנו אותו מהן המילים שהוא זוכר. משה הצליח להיזכר בשתיים מהן:</p>
-                <div class="word-recall-group">
-                  <p class="instruction-text">בחר את <strong>שתי</strong> המילים שמשה הצליח לזכור (רמז: מופיעות בבדיקה המקובלת):</p>
-                  <div class="word-chips">
-                    <button class="word-chip" data-word="banana">בננה 🍌</button>
-                    <button class="word-chip" data-word="sunrise">זריחה 🌅</button>
-                    <button class="word-chip" data-word="apple">תפוח 🍎</button>
-                    <button class="word-chip" data-word="chair">כיסא 🪑</button>
-                    <button class="word-chip" data-word="table">שולחן 📋</button>
-                  </div>
-                </div>
-                <div class="step-footer">
-                  <button id="btn-next-minicog-step" class="btn btn-secondary" disabled>המשך למבחן השעון ➡️</button>
-                </div>
-              </div>
-
-              <!-- Step 2.2: Clock Drawing -->
-              <div class="minicog-step hidden" id="minicog-step-clock">
-                <h3>שלב ב': מבחן השעון</h3>
-                <p>משה צייר את השעון הבא, אך המחוגים אינם מכוונים. עליך לסייע לו לכוון את השעון לזמן המדויק: <strong>עשר דקות לאחת עשרה (11:10)</strong>.</p>
-                
-                <div class="clock-puzzle-area">
-                  <div class="clock-widget">
-                    <!-- SVG Clock representation -->
-                    <svg viewBox="0 0 200 200" id="clock-svg">
-                      <!-- Outer Circle -->
-                      <circle cx="100" cy="100" r="90" class="clock-face"></circle>
-                      <circle cx="100" cy="100" r="5" class="clock-pin"></circle>
-                      
-                      <!-- Clock Numbers -->
-                      <text x="100" y="30" class="clock-num">12</text>
-                      <text x="135" y="40" class="clock-num">1</text>
-                      <text x="160" y="65" class="clock-num">2</text>
-                      <text x="170" y="105" class="clock-num">3</text>
-                      <text x="160" y="145" class="clock-num">4</text>
-                      <text x="135" y="170" class="clock-num">5</text>
-                      <text x="100" y="180" class="clock-num">6</text>
-                      <text x="65" y="170" class="clock-num">7</text>
-                      <text x="40" y="145" class="clock-num">8</text>
-                      <text x="30" y="105" class="clock-num">9</text>
-                      <text x="40" y="65" class="clock-num">10</text>
-                      <text x="65" y="40" class="clock-num">11</text>
-                      
-                      <!-- Clock Hands (Rotatable) -->
-                      <line x1="100" y1="100" x2="100" y2="45" id="hand-hour" class="clock-hand hour-hand"></line>
-                      <line x1="100" y1="100" x2="100" y2="35" id="hand-minute" class="clock-hand minute-hand"></line>
-                    </svg>
-                  </div>
-                  
-                  <div class="clock-controls">
-                    <div class="control-group">
-                      <label>מחוג שעות (Hour Hand):</label>
-                      <div class="btn-group">
-                        <button class="btn btn-sm btn-rotate" data-hand="hour" data-dir="ccw">↺</button>
-                        <span id="hour-val" class="hand-value">12:00</span>
-                        <button class="btn btn-sm btn-rotate" data-hand="hour" data-dir="cw">↻</button>
-                      </div>
-                    </div>
-                    <div class="control-group">
-                      <label>מחוג דקות (Minute Hand):</label>
-                      <div class="btn-group">
-                        <button class="btn btn-sm btn-rotate" data-hand="minute" data-dir="ccw">↺</button>
-                        <span id="minute-val" class="hand-value">:00</span>
-                        <button class="btn btn-sm btn-rotate" data-hand="minute" data-dir="cw">↻</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="step-footer">
-                  <div class="scoring-calculator">
-                    <label>חשב את ציון ה-Mini-Cog הסופי של משה:</label>
-                    <div class="score-selector">
-                      <select id="select-minicog-score" class="form-select">
-                        <option value="">-- בחר ציון (0-5) --</option>
-                        <option value="0">0 נקודות - ירידה קוגניטיבית משמעותית</option>
-                        <option value="1">1 נקודה - ירידה קוגניטיבית משמעותית</option>
-                        <option value="2">2 נקודות - ירידה קוגניטיבית משמעותית</option>
-                        <option value="3">3 נקודות - תקין (גבולי)</option>
-                        <option value="4">4 נקודות - תקין (כשיר לטכנולוגיה) 👍</option>
-                        <option value="5">5 נקודות - תקין לחלוטין</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="action-footer">
-              <button id="btn-submit-room2" class="btn btn-primary hidden">אמת ציון הערכה קוגניטיבית 📋</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ROOM 3: TECHNOLOGY CHAMBER -->
-        <div id="room-3" class="room-view hidden">
-          <div class="glass-card">
-            <h2>חדר 3: היכל הטכנולוגיה <span class="room-subtitle">הגדרת מכשירים ומחקרי יעילות</span></h2>
-            <p class="room-desc">משה נמצא תקין במבחן הקוגניטיבי וכשיר לטכנולוגיה. כעת עליך לבחור ולהגדיר עבורו את המערכת המתאימה, בהתבסס על מחקר ה-<strong>WISDM</strong> בקרב קשישים (Slide 10-12):</p>
-            
-            <div class="puzzle-content tech-puzzle">
-              
-              <!-- Task 1: Acronym Matching -->
-              <div class="tech-subtask">
-                <h3>שלב א': שיוך מונחים טכנולוגיים</h3>
-                <p class="instruction-text">גרור או בחר את הפירוש הנכון לראשי התיבות הבאים:</p>
-                
-                <div class="matching-grid">
-                  <div class="match-card" data-acronym="CGM">
-                    <div class="acronym">CGM</div>
-                    <select class="match-select" id="select-cgm">
-                      <option value="">-- בחר פירוש --</option>
-                      <option value="aid">מערכת הזלפת אינסולין אוטומטית</option>
-                      <option value="cgm">ניטור סוכר רציף (Continuous Glucose Monitoring)</option>
-                      <option value="hcl">לולאה סגורה היברידית</option>
-                      <option value="sap">משאבה תומכת סנסור</option>
-                    </select>
-                  </div>
-                  <div class="match-card" data-acronym="AID">
-                    <div class="acronym">AID</div>
-                    <select class="match-select" id="select-aid">
-                      <option value="">-- בחר פירוש --</option>
-                      <option value="aid">מערכת הזלפת אינסולין אוטומטית (Automated Insulin Delivery)</option>
-                      <option value="cgm">ניטור סוכר רציף</option>
-                      <option value="hcl">לולאה סגורה היברידית</option>
-                      <option value="sap">משאבה תומכת סנסור</option>
-                    </select>
-                  </div>
-                  <div class="match-card" data-acronym="HCL">
-                    <div class="acronym">HCL</div>
-                    <select class="match-select" id="select-hcl">
-                      <option value="">-- בחר פירוש --</option>
-                      <option value="aid">מערכת הזלפת אינסולין אוטומטית</option>
-                      <option value="cgm">ניטור סוכר רציף</option>
-                      <option value="hcl">לולאה סגורה היברידית (Hybrid Closed Loop)</option>
-                      <option value="sap">משאבה תומכת סנסור</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Task 2: WISDM concepts -->
-              <div class="tech-subtask">
-                <h3>שלב ב': הבנת ממצאי מחקר ה-WISDM בקרב מבוגרים</h3>
-                <p class="instruction-text">ענה על שאלות ההבנה הקליניות בנוגע לממצאי המחקר (עיין בשקופיות הרלוונטיות):</p>
-                
-                <div class="gauges-container">
-                  <div class="vaccine-quiz-item">
-                    <label>1. מה הייתה המסקנה המרכזית של מחקר ה-WISDM לגבי יעילות הניטור הרציף (CGM)?</label>
-                    <select id="select-wisdm-conclusion" class="form-select">
-                      <option value="">-- בחר תשובה --</option>
-                      <option value="correct">שימוש ב-CGM מפחית משמעותית את זמן ההיפוגליקמיה (מתחת ל-70 מ"ג/ד"ל) בהשוואה לניטור דקירות אצבע.</option>
-                      <option value="wrong1">שימוש ב-CGM מגדיל את אירועי ההיפוגליקמיה אצל מבוגרים.</option>
-                      <option value="wrong2">לא נמצא הבדל משמעותי בזמן ההיפוגליקמיה בין שימוש ב-CGM לבין דקירות אצבע.</option>
-                    </select>
-                  </div>
-
-                  <div class="vaccine-quiz-item">
-                    <label>2. כיצד השפיעו מאפייני המטופל (כמו גיל מעל 70 או קיום ירידה קוגניטיבית) על יעילות הפחתת ההיפוגליקמיה בשימוש ב-CGM?</label>
-                    <select id="select-wisdm-factors" class="form-select">
-                      <option value="">-- בחר תשובה --</option>
-                      <option value="wrong1">הפחתת ההיפוגליקמיה התרחשה אך ורק אצל מבוגרים צעירים יותר עם תפקוד קוגניטיבי מושלם.</option>
-                      <option value="correct">התועלת והפחתת ההיפוגליקמיה היו עקביות ובלתי תלויות בגיל, רמת HbA1c או קיום ירידה קוגניטיבית.</option>
-                      <option value="wrong2">מטופלים עם ירידה קוגניטיבית חוו עלייה באירועי היפוגליקמיה בשימוש ב-CGM.</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="action-footer">
-              <button id="btn-submit-room3" class="btn btn-primary">הפעל מערכת וכייל פרמטרים 🎛️</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ROOM 4: THE BARRIER BYPASS -->
-        <div id="room-4" class="room-view hidden">
-          <div class="glass-card">
-            <h2>חדר 4: מעבר החסמים <span class="room-subtitle">התמודדות עם חששות וחסמים אצל מבוגרים</span></h2>
-            <p class="room-desc">משה חושש מהמעבר למערכות המתקדמות. במצגת מופו <strong>5 חסמים מרכזיים</strong> באימוץ טכנולוגיות בגיל המבוגר (Slide 20). כמלווה קליני, עליך להאזין לחששותיו של משה ולהתאים להם את המענה הטיפולי הנכון ביותר:</p>
-            
-            <div class="puzzle-content barriers-puzzle">
-              <div class="dialogue-box">
-                <div class="character-area">
-                  <div class="char-avatar">👴</div>
-                  <div class="char-name">משה המטופל</div>
-                </div>
-                <div class="chat-bubbles">
-                  <div class="bubble patient" id="barrier-statement">
-                    "אני מפחד לעשות נזק אם אלחץ על כפתור לא נכון במכשיר..."
-                  </div>
-                  <div class="bubble doctor hidden" id="doctor-reply">
-                    תגובה מצוינת! פתרת חסם זה.
-                  </div>
-                </div>
-              </div>
-
-              <!-- Options Selection -->
-              <div class="barrier-matching-area">
-                <p class="instruction-text">בחר את המענה המתאים ביותר לחשש המוצג למעלה:</p>
-                <div class="barrier-options" id="barrier-options-container">
-                  <!-- Generated dynamically in app.js -->
-                </div>
-              </div>
-
-              <!-- Progress Nodes -->
-              <div class="barriers-progress">
-                <span class="barrier-node" data-barrier="0" title="פחד מכישלון וטעויות">1</span>
-                <span class="barrier-node" data-barrier="1" title="ירידה פיזית ומוטורית">2</span>
-                <span class="barrier-node" data-barrier="2" title="היעדר תמיכה והדרכה">3</span>
-                <span class="barrier-node" data-barrier="3" title="חוסר בתועלת נתפסת">4</span>
-                <span class="barrier-node" data-barrier="4" title="חשש מפרטיות ואבטחת מידע">5</span>
-              </div>
-            </div>
-
-            <div class="action-footer">
-              <button id="btn-submit-room4" class="btn btn-primary" disabled>המשך לחדר הבא ➡️</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ROOM 5: VACCINE SANCTUARY -->
-        <div id="room-5" class="room-view hidden">
-          <div class="glass-card">
-            <h2>חדר 5: מקדש החיסונים <span class="room-subtitle">מתן והנחיות חיסון Shingrix לשלבקת חוגרת</span></h2>
-            <p class="room-desc">לפני שחרורו, משה זקוק לחיסון שלבקת חוגרת (Shingrix - RZV) למניעת שלבקת חוגרת ונוירלגיה פוסט-הרפטית (PHN). עליך לבצע את הפרוטוקול הקליני המדויק לפי הנחיות משרד הבריאות:</p>
-            
-            <div class="puzzle-content vaccine-puzzle">
-              
-              <!-- Part A: Storage & Prep -->
-              <div class="vaccine-section">
-                <h3>שלב א': אחסון ושחזור החיסון</h3>
-                
-                <div class="fridge-drag-area">
-                  <div class="drag-item-container">
-                    <p class="instruction-text">גרור את בקבוקון החיסון למקום האחסון המתאים בקליניקה:</p>
-                    <div id="vaccine-vial" class="vial-element" draggable="true">💉 בקבוקון Shingrix (RZV)</div>
-                  </div>
-                  
-                  <div class="storage-locations">
-                    <div class="storage-box zone-freezer" data-temp="-18">
-                      <span class="box-title">מקפיא (18°C-)</span>
-                    </div>
-                    <div class="storage-box zone-fridge" data-temp="4">
-                      <span class="box-title">מקרר (2°C - 8°C) ❄️</span>
-                    </div>
-                    <div class="storage-box zone-shelf" data-temp="25">
-                      <span class="box-title">מדף פתוח (25°C)</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="reconstitute-area hidden" id="reconstitute-panel">
-                  <p class="instruction-text">שחזור החיסון: החיסון מגיע בשני בקבוקונים (אבקה ותרחיף). ערבב אותם והכן את הזריקה:</p>
-                  <div class="reconstitute-actions">
-                    <button class="btn btn-secondary" id="btn-mix-vials">שאב תרחיף לתוך אבקת Antigen gE 🧪</button>
-                    <button class="btn btn-secondary hidden" id="btn-shake-vial">נער בעדינות את התכשיר 👋</button>
-                  </div>
-                  <div class="vial-fluid-status">
-                    נוזל נוכחי: <span id="fluid-state" class="highlight-orange">טרם הוכן</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Part B: Dosing & Clinical Guidelines Quiz -->
-              <div class="vaccine-section hidden" id="vaccine-quiz-panel">
-                <h3>שלב ב': פרוטוקול מתן והנחיות קליניות</h3>
-                
-                <div class="vaccine-quiz-item">
-                  <label>1. מהו מרווח הזמן המומלץ למנה השנייה של החיסון אצל משה (ללא דיכוי חיסוני)?</label>
-                  <select id="quiz-interval" class="form-select">
-                    <option value="">-- בחר אפשרות --</option>
-                    <option value="4weeks">מ-4 שבועות ומעלה</option>
-                    <option value="2-6months">2 עד 6 חודשים מהמנה הראשונה</option>
-                    <option value="1year">שנה שלמה לאחר המנה הראשונה</option>
-                  </select>
-                </div>
-
-                <div class="vaccine-quiz-item">
-                  <label>2. משה קיבל גם חיסון לשפעת. מהי הנחיית ההזרקה במקרה זה?</label>
-                  <select id="quiz-coadmin" class="form-select">
-                    <option value="">-- בחר אפשרות --</option>
-                    <option value="separate">אסור לתת יחד, יש להמתין 14 יום בין החיסונים</option>
-                    <option value="simultaneous">ניתן לתת בו-זמנית, אך בגפיים שונות (או בהפרש 2.5 ס"מ באותו גפה)</option>
-                    <option value="half-dose">מותר לתת יחד אך במינון מופחת</option>
-                  </select>
-                </div>
-
-                <div class="vaccine-quiz-item">
-                  <label>3. האם משה זכאי לקבל את החיסון במסגרת סל הבריאות?</label>
-                  <select id="quiz-basket" class="form-select">
-                    <option value="">-- בחר אפשרות --</option>
-                    <option value="no">לא, החיסון אינו כלול בסל כלל</option>
-                    <option value="yes">כן, החיסון כלול בסל ללא מחלות רקע לבני 65 ומעלה (ומשה בן 68) 👍</option>
-                    <option value="risk-only">כלול בסל רק לחולים אונקולוגיים או מדוכאי חיסון קשים</option>
-                  </select>
-                </div>
-              </div>
-
-            </div>
-
-            <div class="action-footer">
-              <button id="btn-submit-room5" class="btn btn-primary" disabled>חסן את משה וסיים אתגר 💉</button>
-            </div>
-          </div>
-        </div>
-
       </section>
 
       <!-- SCREEN 3: VICTORY & CERTIFICATE -->
@@ -450,15 +102,16 @@
         <div class="glass-card text-center fade-in">
           <div class="victory-seal">🏆</div>
           <h1 class="victory-title">עבודה מצוינת, דוקטור!</h1>
-          <p class="victory-subtitle">השלמת בהצלחה את כל שלבי האתגר הטכנולוגי והרפואי בגיל השלישי!</p>
+          <p class="victory-subtitle">פתחת את כל הדלתות ועברת בהצלחה את כל שלבי האתגר הקליני!</p>
           
           <div class="clinical-summary">
-            <h3>סיכום הטיפול במשה:</h3>
+            <h3>סיכום ההישגים שלך באתגר:</h3>
             <ul class="summary-list">
-              <li>✔️ <strong>אומדן קוגניטיבי וסיכונים:</strong> מיפית את סיכוני הדמנציה והוכחת שמשה כשיר קוגניטיבית למשאבה וסנסור עם ציון Mini-Cog של 4 נקודות.</li>
-              <li>✔️ <strong>התאמה טכנולוגית:</strong> הגדרת מערכת CGM וניתחת את ממצאי מחקר ה-WISDM להפחתת היפוגליקמיה באופן עקבי ללא תלות בגיל או במצב קוגניטיבי.</li>
-              <li>✔️ <strong>גישור על חסמים:</strong> פתרת את כל 5 החששות האישיים והסביבתיים של משה ורתמת אותו לתהליך.</li>
-              <li>✔️ <strong>הגנה חיסונית:</strong> הכנת ונתת למשה את חיסון ה-Shingrix בצורה בטוחה, הגדרת לוח זמנים מרווח (2-6 חודשים) ותיאמת מתן בו-זמני.</li>
+              <li>✔️ <strong>סיכוני דמנציה:</strong> מיפית במדויק את הקשר בין גיל פרוץ הסוכרת לסיכון לדמנציה על פי מחקר JAMA.</li>
+              <li>✔️ <strong>אומדן קוגניטיבי:</strong> חישבת נכון את ציון ה-Mini-Cog המאשר את כשירותו של משה לטכנולוגיה.</li>
+              <li>✔️ <strong>מחקר WISDM:</strong> אימתת את יעילות ה-CGM בהפחתת היפוגליקמיה באופן עקבי לכלל המבוגרים.</li>
+              <li>✔️ <strong>חסמים וחששות:</strong> התאמת מענה קליני וסביבתי מושלם לכל חששותיו האישיים של משה.</li>
+              <li>✔️ <strong>פרוטוקול חיסון Shingrix:</strong> יישמת את הנחיות משרד הבריאות לגבי אחסון במקרר בלבד, מרווח מנות של 2-6 חודשים, מתן בו-זמני וזכאות בסל.</li>
             </ul>
           </div>
 
@@ -467,8 +120,8 @@
             <div class="cert-border">
               <div class="cert-title">תעודת מומחיות קלינית</div>
               <div class="cert-subtitle">בטכנולוגיות סוכרת וחיסונים לגיל השלישי</div>
-              <div class="cert-name">מוענקת בזאת למשתמש/ת</div>
-              <div class="cert-body">על השלמה בהצלחה של חדר הבריחה הדיגיטלי "האתגר הטכנולוגי בסוכרת בגיל השלישי" ויישום מוצלח של הנחיות משרד הבריאות לחיסון שלבקת חוגרת (Shingrix).</div>
+              <div class="cert-name" id="cert-recipient-name">מוענקת בזאת ל-דר' דנה</div>
+              <div class="cert-body">על מעבר בהצלחה של חדר הבריחה "האתגר הטכנולוגי בסוכרת בגיל השלישי" ויישום מדויק של הנחיות משרד הבריאות לחיסון שלבקת חוגרת (Shingrix).</div>
               <div class="cert-footer">
                 <div class="cert-sign">
                   <span class="sign-line">אסנת פינטו, MSN, RN</span>
@@ -490,76 +143,6 @@
 
     </main>
 
-    <!-- Slide Clues Sidebar/Panel -->
-    <aside id="clues-panel" class="closed">
-      <header class="clues-header">
-        <h3>💡 רמז קליני ושקופיות תומכות</h3>
-        <button id="btn-close-clues" class="btn-close">&times;</button>
-      </header>
-      <div class="clues-body">
-        <p class="clues-intro">להלן השקופיות וחומרי המקור הרלוונטיים לשלב הנוכחי שלך במשחק:</p>
-        
-        <!-- Room-specific slide clues content -->
-        <div id="clue-content-room1" class="clue-content-item hidden">
-          <h4>מתוך המצגת - שקופית 4-5: קשר בין גיל פרוץ סוכרת לדמנציה</h4>
-          <div class="slide-image-wrapper">
-            <img src="slides/slide4.png" alt="Slide 4 - Dementia risk and diabetes onset" class="slide-img">
-          </div>
-          <p class="clue-text">שקופית זו מציגה את ממצאי מחקר ה-JAMA משנת 2021 העוקב אחרי סיכון לדמנציה על פי גיל פרוץ הסוכרת. שים לב ליחסי הסיכון (Hazard Ratios) המוצגים בשקופית 4 או 5.</p>
-          <div class="slide-image-wrapper">
-            <img src="slides/slide5.png" alt="Slide 5 - JAMA Citation" class="slide-img">
-          </div>
-        </div>
-
-        <div id="clue-content-room2" class="clue-content-item hidden">
-          <h4>מתוך המצגת - שקופית 6 ו-26: הערכה קוגניטיבית Mini-Cog</h4>
-          <div class="slide-image-wrapper">
-            <img src="slides/slide6.png" alt="Slide 6 - MCI" class="slide-img">
-          </div>
-          <p class="clue-text">בגיל השלישי (מעל 65) מומלץ לבצע הערכה קוגניטיבית לפני מעבר לטכנולוגיות מורכבות באמצעות מבחן ה-Mini-Cog. המבחן כולל זיכרון של 3 מילים ומבחן ציור שעון (שבו ציור תקין מזכה ב-2 נקודות וכל מנה שנזכרה בנקודה נוספת, סה"כ 5 נקודות).</p>
-          <div class="slide-image-wrapper">
-            <img src="slides/slide26.png" alt="Slide 26 - Take Home Messages" class="slide-img">
-          </div>
-        </div>
-
-        <div id="clue-content-room3" class="clue-content-item hidden">
-          <h4>מתוך המצגת - שקופית 10-12: מחקר ה-WISDM ויעילות CGM</h4>
-          <div class="slide-image-wrapper">
-            <img src="slides/slide10.png" alt="Slide 10 - WISDM Study" class="slide-img">
-          </div>
-          <p class="clue-text">מחקר ה-WISDM בדק ניטור סוכר רציף (CGM) אצל מבוגרים. התוצאות מראות ירידה משמעותית בהיפוגליקמיה והיענות גבוהה לשימוש במכשיר.</p>
-          <div class="slide-image-wrapper">
-            <img src="slides/slide12.png" alt="Slide 12 - CGM Efficacy" class="slide-img">
-          </div>
-        </div>
-
-        <div id="clue-content-room4" class="clue-content-item hidden">
-          <h4>מתוך המצגת - שקופית 20: חמשת החסמים באימוץ טכנולוגיה</h4>
-          <div class="slide-image-wrapper">
-            <img src="slides/slide20.png" alt="Slide 20 - Technology Barriers" class="slide-img">
-          </div>
-          <p class="clue-text">השקופית מפרטת את 5 החסמים של מבוגרים בקליטת טכנולוגיה: פחד מכישלון, ירידה פיזית וקוגניטיבית, חוסר תמיכה משפחתית/רפואית, היעדר תועלת נתפסת, וחששות פרטיות.</p>
-        </div>
-
-        <div id="clue-content-room5" class="clue-content-item hidden">
-          <h4>מתוך הנחיות משרד הבריאות - חיסון Shingrix לשלבקת חוגרת</h4>
-          <div class="clue-scroll-text">
-            <strong>מפתח קליני - הנחיות משרד הבריאות:</strong>
-            <ul>
-              <li><strong>אחסון:</strong> יש לאחסן במקרר בלבד (2°C עד 8°C). חל איסור להקפיא את התרכיב.</li>
-              <li><strong>שחזור:</strong> לשאוב את התרחיף לתוך בקבוקון האבקה. לנער בעדינות. הנוזל שיתקבל שקוף עד חום בהיר. לשימוש תוך 6 שעות מההכנה.</li>
-              <li><strong>מינון:</strong> שתי מנות בהפרש של 2-6 חודשים.</li>
-              <li><strong>שילוב חיסונים:</strong> ניתן לתת בו-זמנית עם כל תרכיב אחר (כגון שפעת), בהזרקה בגפיים שונות או במרחק של לפחות 2.5 ס"מ באותו גפה.</li>
-              <li><strong>סל הבריאות:</strong> כלול בסל לכלל האוכלוסייה ללא מחלת רקע מגיל 65 ומעלה.</li>
-            </ul>
-          </div>
-        </div>
-
-      </div>
-    </aside>
-
-    <!-- Overlay under clues panel -->
-    <div id="clues-overlay" class="hidden"></div>
   </div>
 
   <script src="app.js"></script>
