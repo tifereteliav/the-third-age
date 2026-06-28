@@ -272,6 +272,9 @@ const elements = {
   finalCodeValue: document.getElementById('final-code-value'),
   finalScoreText: document.getElementById('final-score-text'),
   
+  // Transition elements
+  transitionOverlay: document.getElementById('transition-overlay'),
+
   // General actions
   btnSubmitPasscode: document.getElementById('btn-submit-passcode'),
   btnStartGame: document.getElementById('btn-start-game'),
@@ -371,6 +374,12 @@ function setupEventListeners() {
     // Zoom/walk camera forward through the selected door into the Room Box
     elements.room3dContainer.classList.add("zoom-door-" + choice);
     
+    // Show full-screen atmospheric transition corridor overlay after a short delay
+    setTimeout(() => {
+      elements.transitionOverlay.classList.remove('hidden');
+      elements.transitionOverlay.classList.add('active');
+    }, 300);
+    
     setTimeout(() => {
       const nextIndex = state.currentQuestionIndex + 1;
       if (nextIndex < questionsData.length) {
@@ -382,7 +391,12 @@ function setupEventListeners() {
         elements.room3dContainer.offsetHeight;
         elements.room3dContainer.classList.remove('fade-enter');
         
-        state.activeSelectionActive = true;
+        // Hide transition overlay
+        elements.transitionOverlay.classList.remove('active');
+        setTimeout(() => {
+          elements.transitionOverlay.classList.add('hidden');
+          state.activeSelectionActive = true;
+        }, 400); // Wait for fade-out transition to complete
       } else {
         // Completed all questions! Evaluate selections
         let correctCount = 0;
@@ -401,12 +415,17 @@ function setupEventListeners() {
           elements.finalScoreText.innerText = 'ענית נכון על ' + correctCount + ' מתוך 8 שאלות. נסה שוב לקבלת הקוד הסודי המלא!';
         }
         
-        showScreen(elements.screenVictory);
-        elements.hud.classList.add('hidden');
-        playSound('success');
-        state.activeSelectionActive = true;
+        // Hide transition overlay
+        elements.transitionOverlay.classList.remove('active');
+        setTimeout(() => {
+          elements.transitionOverlay.classList.add('hidden');
+          showScreen(elements.screenVictory);
+          elements.hud.classList.add('hidden');
+          playSound('success');
+          state.activeSelectionActive = true;
+        }, 400);
       }
-    }, 1200); // 1200ms corridor zoom timeout
+    }, 1400); // Extended corridor zoom timeout to match transition portal
   });
 
   // Restart click

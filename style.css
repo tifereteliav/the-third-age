@@ -1537,3 +1537,67 @@ body {
     opacity: 0;
   }
 }
+
+/* ==========================================================================
+   Transition Portal Overlay with Atmospheric Zooming Clinic Corridor
+   ========================================================================== */
+
+#transition-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#transition-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.transition-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('clinic_corridor.png');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.6) contrast(1.1) saturate(0.9);
+  animation: zoomCorridor 1.5s ease-in-out forwards;
+}
+
+.transition-title {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-primary);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--success-neon);
+  text-shadow: 0 0 15px var(--success-glow);
+  background: rgba(8, 14, 28, 0.75);
+  padding: 12px 28px;
+  border-radius: 50px;
+  border: 1px solid rgba(0, 245, 212, 0.35);
+  animation: floatText 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes zoomCorridor {
+  from { transform: scale(1.0); }
+  to { transform: scale(1.25); }
+}
+
+@keyframes floatText {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
