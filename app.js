@@ -375,9 +375,17 @@ function setupEventListeners() {
     elements.room3dContainer.classList.add("zoom-door-" + choice);
     
     // Set dynamic transition image to show progression in space
-    const transitionImages = ['clinic_corridor.png', 'clinic_lab.png', 'clinic_server.png', 'clinic_gate.png'];
-    const imgIndex = state.currentQuestionIndex % transitionImages.length;
-    const nextImg = transitionImages[imgIndex];
+    const transitionImages = [
+      'clinic_corridor.png',
+      'clinic_reception.png',
+      'clinic_lab.png',
+      'clinic_scanner.png',
+      'clinic_server.png',
+      'clinic_icu.png',
+      'clinic_gate.png',
+      'clinic_vault.png'
+    ];
+    const nextImg = transitionImages[state.currentQuestionIndex % transitionImages.length];
     const bgElement = elements.transitionOverlay.querySelector('.transition-bg');
     if (bgElement) {
       bgElement.style.backgroundImage = "url('" + nextImg + "')";
