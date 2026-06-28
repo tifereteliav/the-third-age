@@ -929,3 +929,76 @@ body {
     border: 8px double #c5a880;
   }
 }
+
+
+/* ==========================================================================
+   Passcode, Selection Highlight, and Final Code styles
+   ========================================================================== */
+
+.error-text {
+  transition: opacity 0.3s ease;
+}
+
+.error-text.hidden {
+  display: none !important;
+  opacity: 0;
+}
+
+/* Golden selection border - doesn't reveal correctness during play */
+.door-card.selected-door .door-front {
+  border-color: var(--warning-neon) !important;
+  box-shadow: 0 0 20px var(--warning-glow) !important;
+  background: linear-gradient(145deg, #24344f 0%, #15233c 100%) !important;
+}
+
+.final-code-panel {
+  background: rgba(10, 15, 28, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 15px auto 25px auto;
+  max-width: 550px;
+  text-align: center;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.final-code-panel h3 {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.code-value {
+  font-family: var(--font-monospace);
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: var(--success-neon);
+  text-shadow: 0 0 15px var(--success-glow);
+  letter-spacing: 2px;
+  margin: 15px 0;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  display: inline-block;
+  min-width: 280px;
+  text-transform: uppercase;
+}
+
+.score-text {
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .code-value {
+    font-size: 1.8rem;
+    min-width: 100%;
+    padding: 10px;
+  }
+  .final-code-panel {
+    padding: 16px;
+    margin: 10px auto 20px auto;
+  }
+}

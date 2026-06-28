@@ -61,9 +61,10 @@
             </p>
           </div>
 
-          <div class="name-input-group" style="margin-bottom: 20px;">
-            <label for="player-name-input" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted);">הזן את שמך (יופיע על גבי תעודת המומחה בסיום):</label>
-            <input type="text" id="player-name-input" value="דר' דנה" placeholder="השם שלך" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 14px; border-radius: 8px; font-family: var(--font-primary); font-size: 1.1rem; text-align: center; width: 100%; max-width: 300px; outline: none; transition: border-color 0.3s; direction: rtl;">
+          <div class="passcode-input-group" style="margin-bottom: 20px;">
+            <label for="passcode-input" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted);">הזן קוד כניסה (קוד: 7878):</label>
+            <input type="password" id="passcode-input" placeholder="🔒 קוד כניסה" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 14px; border-radius: 8px; font-family: var(--font-primary); font-size: 1.1rem; text-align: center; width: 100%; max-width: 300px; outline: none; transition: border-color 0.3s; direction: ltr;">
+            <div id="passcode-error-msg" class="error-text hidden" style="color: var(--alert-neon); font-size: 0.95rem; margin-top: 8px; font-weight: 600;">קוד כניסה שגוי. נסה שוב!</div>
           </div>
 
           <button id="btn-start-game" class="btn btn-primary btn-large">התחל באתגר הדלתות 🚪</button>
@@ -97,51 +98,41 @@
         </div>
       </section>
 
-      <!-- SCREEN 3: VICTORY & CERTIFICATE -->
+      <!-- SCREEN 3: VICTORY & ASSESSMENTS -->
       <section id="screen-victory" class="screen hidden">
         <div class="glass-card text-center fade-in">
           <div class="victory-seal">🏆</div>
-          <h1 class="victory-title">עבודה מצוינת, דוקטור!</h1>
-          <p class="victory-subtitle">פתחת את כל הדלתות ועברת בהצלחה את כל שלבי האתגר הקליני!</p>
+          <h1 class="victory-title">האתגר הושלם!</h1>
+          <p class="victory-subtitle">סיימת את כל 8 שלבי ההערכה הרפואית.</p>
           
+          <!-- Code reward panel -->
+          <div class="final-code-panel">
+            <h3>קוד הגמר של האתגר:</h3>
+            <div id="final-code-value" class="code-value">THE THIRD AGE</div>
+            <p id="final-score-text" class="score-text">ענית נכון על כל השאלות!</p>
+          </div>
+
           <div class="clinical-summary">
-            <h3>סיכום ההישגים שלך באתגר:</h3>
+            <h3>סיכום השלבים שעברת:</h3>
             <ul class="summary-list">
-              <li>✔️ <strong>סיכוני דמנציה:</strong> מיפית במדויק את הקשר בין גיל פרוץ הסוכרת לסיכון לדמנציה על פי מחקר JAMA.</li>
-              <li>✔️ <strong>אומדן קוגניטיבי:</strong> חישבת נכון את ציון ה-Mini-Cog המאשר את כשירותו של משה לטכנולוגיה.</li>
-              <li>✔️ <strong>מחקר WISDM:</strong> אימתת את יעילות ה-CGM בהפחתת היפוגליקמיה באופן עקבי לכלל המבוגרים.</li>
-              <li>✔️ <strong>חסמים וחששות:</strong> התאמת מענה קליני וסביבתי מושלם לכל חששותיו האישיים של משה.</li>
-              <li>✔️ <strong>פרוטוקול חיסון Shingrix:</strong> יישמת את הנחיות משרד הבריאות לגבי אחסון במקרר בלבד, מרווח מנות של 2-6 חודשים, מתן בו-זמני וזכאות בסל.</li>
+              <li>✔️ <strong>סיכוני דמנציה בסוכרת</strong> (לפי מחקר ה-JAMA).</li>
+              <li>✔️ <strong>הערכת Mini-Cog וכשירות קוגניטיבית</strong>.</li>
+              <li>✔️ <strong>יתרונות ה-CGM במבוגרים</strong> (מחקר WISDM).</li>
+              <li>✔️ <strong>התמודדות עם חרדות וחסמים טכנולוגיים</strong>.</li>
+              <li>✔️ <strong>סל הבריאות וזכאות לחיסון שלבקת חוגרת</strong>.</li>
+              <li>✔️ <strong>שרשרת קירור ותנאי אחסון ל-Shingrix</strong>.</li>
+              <li>✔️ <strong>לוח זמנים למנה השנייה של החיסון</strong>.</li>
+              <li>✔️ <strong>מתן בו-זמני של חיסון שפעת ושלבקת חוגרת</strong>.</li>
             </ul>
           </div>
 
-          <!-- Interactive Clinical Certificate -->
-          <div class="certificate-container" id="certificate-print">
-            <div class="cert-border">
-              <div class="cert-title">תעודת מומחיות קלינית</div>
-              <div class="cert-subtitle">בטכנולוגיות סוכרת וחיסונים לגיל השלישי</div>
-              <div class="cert-name" id="cert-recipient-name">מוענקת בזאת ל-דר' דנה</div>
-              <div class="cert-body">על מעבר בהצלחה של חדר הבריחה "האתגר הטכנולוגי בסוכרת בגיל השלישי" ויישום מדויק של הנחיות משרד הבריאות לחיסון שלבקת חוגרת (Shingrix).</div>
-              <div class="cert-footer">
-                <div class="cert-sign">
-                  <span class="sign-line">אסנת פינטו, MSN, RN</span>
-                  <span class="sign-title">מתאמת סוכרת, שערי צדק</span>
-                </div>
-                <div class="cert-date">
-                  <span class="date-line" id="cert-date-val">יוני 2026</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div class="victory-actions">
-            <button id="btn-restart" class="btn btn-secondary">שחק שוב 🔁</button>
-            <button id="btn-print-cert" class="btn btn-primary">הדפס תעודה 🖨️</button>
+            <button id="btn-restart" class="btn btn-primary btn-large">נסה שוב 🔁</button>
           </div>
         </div>
       </section>
 
-    </main>
+      </main>
 
   </div>
 

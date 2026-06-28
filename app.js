@@ -1,14 +1,9 @@
-/* ==========================================================================
-   Game Logic & State: 3D Doors Clinical Escape Room
-   ========================================================================== */
-
 // Game State
 const state = {
   currentQuestionIndex: 0,
-  playerName: "דר' דנה",
   soundEnabled: true,
-  completedQuestions: new Set(),
-  activeSelectionActive: true // blocks clicks during animations
+  selections: new Array(8).fill(null), // tracks chosen door index (0, 1, 2) for each question
+  activeSelectionActive: true
 };
 
 // 8 Clinical Questions Database
@@ -20,17 +15,17 @@ const questionsData = [
       {
         answer: "סוכרת אינה משפיעה בכלל על הסיכון לפתח דמנציה.",
         correct: false,
-        explanation: "שגיאה. מחקר ה-JAMA הראה קשר ישיר ומשמעותי בין סוכרת לסיכון מוגבר לדמנציה."
+        explanation: "סוכרת בגיל מבוגר אכן משפיעה משמעותית על הסיכון לפתח דמנציה."
       },
       {
         answer: "סוכרת בגיל מבוגר מעלה משמעותית את הסיכון לדמנציה, במיוחד אם היא נמשכת שנים רבות 🗝️",
         correct: true,
-        explanation: "נכון מאוד! אבחון של סוכרת מעל 10 שנים לפני גיל 70 מעלה את הסיכון לדמנציה פי 2.12."
+        explanation: "אבחון של סוכרת מעל 10 שנים לפני גיל 70 מעלה את הסיכון לדמנציה פי 2.12."
       },
       {
         answer: "סוכרת דווקא מגינה על המוח ומפחיתה את הסיכון לירידה קוגניטיבית.",
         correct: false,
-        explanation: "לא נכון. סוכרת היא גורם סיכון מוכר לפגיעה בכלי דם ובמערכת העצבים, דבר המגביר את הסיכון לדמנציה."
+        explanation: "סוכרת אינה מגינה על המוח אלא מהווה גורם סיכון לפגיעה בכלי דם ומערכת העצבים."
       }
     ]
   },
@@ -41,17 +36,17 @@ const questionsData = [
       {
         answer: "ציון 0 עד 2 (ציון נמוך המעיד על סיכון לירידה קוגניטיבית).",
         correct: false,
-        explanation: "לא נכון. ציון נמוך מ-3 מעיד על חשד לירידה קוגניטיבית ומחייב הערכה מעמיקה יותר ומעורבות מטפל צמוד."
+        explanation: "ציון נמוך מ-3 מעיד על חשד לירידה קוגניטיבית ומחייב הערכה מעמיקה יותר."
       },
       {
         answer: "ציון 3 ומעלה (ציון המעיד על תפקוד קוגניטיבי תקין) 🗝️",
         correct: true,
-        explanation: "מעולה! ציון של 3 ומעלה (למשל 4 מתוך 5 שקיבל משה - 2 על המילים ו-2 על השעון התקין) נחשב תקין ומאפשר תפעול עצמאי."
+        explanation: "ציון 3 ומעלה (למשל ציון 4 שקיבל משה - 2 על המילים ו-2 על השעון) נחשב תקין."
       },
       {
         answer: "אין צורך בציון כלל, כולם יכולים להשתמש בטכנולוגיה ללא אומדן.",
         correct: false,
-        explanation: "שגיאה. אומדן קוגניטיבי חשוב מאוד לפני חיבור לטכנולוגיות מתקדמות כדי למנוע טעויות מינון מסוכנות."
+        explanation: "אומדן קוגניטיבי הוא קריטי כדי לוודא שהמטופל מסוגל לתפעל את המכשיר בבטחה."
       }
     ]
   },
@@ -62,17 +57,17 @@ const questionsData = [
       {
         answer: "הוא מפחית משמעותית אירועי היפוגליקמיה (נפילות סוכר) מסוכנות 🗝️",
         correct: true,
-        explanation: "נכון מאוד! מחקר ה-WISDM הוכיח כי ניטור רציף (CGM) מפחית משמעותית את זמן השהייה בהיפוגליקמיה, והיתרון הזה עקבי לכולם ללא קשר לגיל או מצב קוגניטיבי."
+        explanation: "מחקר ה-WISDM הוכיח כי ניטור רציף (CGM) מפחית משמעותית את זמן השהייה בהיפוגליקמיה."
       },
       {
         answer: "הוא מחליף לחלוטין את הצורך בפעילות גופנית או תזונה נכונה.",
         correct: false,
-        explanation: "לא נכון. טכנולוגיה מנטרת סוכר אך אינה מחליפה את הצורך באורח חיים בריא וטיפול תרופתי."
+        explanation: "הסנסור מנטר אך אינו מחליף את החשיבות של תזונה ואורח חיים בריא."
       },
       {
         answer: "הוא מונע לחלוטין הופעה של מחלות לב וכלי דם.",
         correct: false,
-        explanation: "לא מדויק. הוא מסייע באיזון הסוכר ובמניעת נפילות סוכר מסוכנות, אך אינו מונע מחלות באופן ישיר."
+        explanation: "הסנסור מסייע באיזון הסוכר, אך אינו מונע ישירות מחלות לב וכלי דם."
       }
     ]
   },
@@ -83,17 +78,17 @@ const questionsData = [
       {
         answer: "נגיד לו שאין לו ברירה ושינסה להסתדר לבד עם המכשיר.",
         correct: false,
-        explanation: "שגיאה. גישה כזו תגביר את החרדה שלו ותוביל לנטישת הטיפול."
+        explanation: "זה עלול להגביר את חרדתו ולהוביל לנטישת הטיפול."
       },
       {
         answer: "ניתן לו הדרכה סבלנית ואיטית, נבצע תרגול פיזי מודרך, ונשתף קרוב משפחה תומך 🗝️",
         correct: true,
-        explanation: "מדויק! הדרכה מותאמת אישית ותרגול מעשי מפחיתים את החרדה הטכנולוגית ומקנים ביטחון עצמי למטופל."
+        explanation: "הדרכה מעשית מעצימה את המטופל ומקנה לו ביטחון בתפעול המכשיר."
       },
       {
         answer: "נעביר אותו מיד לטיפול ישן יותר של זריקות ודקירות אצבע מרובות.",
         correct: false,
-        explanation: "שגיאה. טכנולוגיה מודרנית (כמו CGM) משפרת משמעותית את איכות חייו, ולכן כדאי להשקיע בהדרכה במקום לוותר."
+        explanation: "עדיף להשקיע בהדרכה מאשר לשלול ממנו את היתרונות הטכנולוגיים של סנסור מודרני."
       }
     ]
   },
@@ -104,17 +99,17 @@ const questionsData = [
       {
         answer: "כן, החיסון כלול בסל הבריאות לכל אזרח מגיל 65 ומעלה 🗝️",
         correct: true,
-        explanation: "נכון מאוד! על פי הנחיות משרד הבריאות בישראל, החיסון כלול בסל לכל מבוגר מגיל 65 ומעלה, וכן למבוגרים מגיל 18 עם דיכוי חיסוני."
+        explanation: "על פי הנחיות סל הבריאות, החיסון כלול ומסובסד באופן מלא לכל אדם מעל גיל 65."
       },
       {
         answer: "לא, החיסון כלול בסל רק לילדים קטנים בטיפת חלב.",
         correct: false,
-        explanation: "שגיאה. החיסון מיועד במיוחד למבוגרים מגיל 50 ומעלה למניעת שלבקת חוגרת וסיבוכיה."
+        explanation: "החיסון מיועד למבוגרים מגיל 50 למניעת שלבקת חוגרת וסיבוכיה."
       },
       {
         answer: "לא, החיסון ניתן בחינם רק למי שכבר חלה בשלבקת חוגרת שלוש פעמים בעבר.",
         correct: false,
-        explanation: "לא נכון. החיסון מיועד למניעה ומומלץ לכולם, גם למי שלא חלה מעולם וגם למי שחלה בעבר."
+        explanation: "החיסון מומלץ למניעה לכל המבוגרים, ללא קשר לשאלה האם חלו בעבר."
       }
     ]
   },
@@ -125,17 +120,17 @@ const questionsData = [
       {
         answer: "במקרר רגיל (בטמפרטורה של 2°C עד 8°C). חל איסור מוחלט להקפיא את החיסון! 🗝️",
         correct: true,
-        explanation: "מדויק! יש לשמור את החיסון במקרר (2-8 מעלות) באריזה המקורית. הקפאה של החיסון תהרוס אותו ותפסול אותו משימוש."
+        explanation: "יש לאחסן במקרר רגיל (2-8 מעלות) באריזה המקורית. הקפאה של החיסון תהרוס אותו."
       },
       {
         answer: "במקפיא בטמפרטורה של 18°C- כדי לשמור על האנטיגנים יציבים.",
         correct: false,
-        explanation: "טעות חמורה! הקפאת חיסון ה-Shingrix פוגעת ביעילותו ומקלקלת את המרכיבים שלו."
+        explanation: "אסור להקפיא את חיסון ה-Shingrix בשום אופן. הקפאה פוגעת במרכיביו."
       },
       {
         answer: "על המדף בארון התרופות בטמפרטורת החדר.",
         correct: false,
-        explanation: "לא נכון. ללא שרשרת קירור (מקרר) החיסון יתקלקל במהירות ויאבד את יעילותו."
+        explanation: "ללא שרשרת קירור (מקרר) החיסון יתקלקל במהירות ויאבד את יעילותו."
       }
     ]
   },
@@ -146,17 +141,17 @@ const questionsData = [
       {
         answer: "כעבור שבוע אחד בלבד.",
         correct: false,
-        explanation: "שגיאה. הגוף זקוק לזמן כדי לפתח תגובה חיסונית ראשונית לפני מנת הדחף השנייה."
+        explanation: "מרווח של שבוע קצר מדי לפיתוח תגובה חיסונית מספקת."
       },
       {
         answer: "כעבור שנתיים שמיות.",
         correct: false,
-        explanation: "לא נכון. הפרש של שנתיים הוא ארוך מדי וישאיר את המטופל ללא הגנה מלאה בזמן זה."
+        explanation: "מרווח של שנתיים ארוך מדי ומשאיר את המטופל חשוף ללא הגנה מלאה."
       },
       {
         answer: "כעבור 2 עד 6 חודשים מקבלת המנה הראשונה 🗝️",
         correct: true,
-        explanation: "נכון מאוד! לוח הזמנים הסטנדרטי להשלמת החיסון הוא מתן מנה שנייה במרווח של 2 עד 6 חודשים לאחר המנה הראשונה."
+        explanation: "מרווח הזמנים המומלץ להשלמת הסדרה באדם בריא הוא 2 עד 6 חודשים מהמנה הראשונה."
       }
     ]
   },
@@ -167,17 +162,17 @@ const questionsData = [
       {
         answer: "כן, מותר לתת באותו יום, במזרקים שונים ובזרועות שונות 🗝️",
         correct: true,
-        explanation: "מצוין, סיימת את האתגר! מותר לתת Shingrix וחיסון שפעת באותו ביקור במרפאה. יש להקפיד להזריק אותם במזרקים נפרדים ובאתרי הזרקה שונים (למשל זרוע ימין וזרוע שמאל)."
+        explanation: "ניתן לשלב Shingrix עם חיסון שפעת באותו ביקור במרפאה, במזרקים ובאתרים נפרדים."
       },
       {
         answer: "אסור בהחלט. יש להמתין לפחות חודש שלם בין חיסון לחיסון.",
         correct: false,
-        explanation: "לא נכון. אין שום מניעה לשלב את שני החיסונים באותו היום, והדבר אף משפר את אחוזי ההתחסנות באוכלוסייה."
+        explanation: "אין שום מניעה לשלב את שני החיסונים המומתים הללו באותו היום."
       },
       {
         answer: "מותר, ואף מומלץ לשאוב את שניהם יחד לתוך אותו מזרק כדי לחסוך דקירה.",
         correct: false,
-        explanation: "טעות חמורה! אסור לערבב חיסונים שונים באותו מזרק. הדבר עלול להרוס את החיסונים ולגרום לתופעות לוואי."
+        explanation: "חל איסור לערבב חומרים במזרק אחד אלא אם צוין אחרת במפורש על ידי היצרנים."
       }
     ]
   }
@@ -216,7 +211,6 @@ function playSound(type) {
     osc.start(now);
     osc.stop(now + 0.08);
   } else if (type === 'success') {
-    // Beautiful ascending major chord (C Major)
     const notes = [261.63, 329.63, 392.00, 523.25];
     notes.forEach((freq, i) => {
       const o = audioCtx.createOscillator();
@@ -231,7 +225,6 @@ function playSound(type) {
       o.stop(now + i * 0.08 + 0.25);
     });
   } else if (type === 'error') {
-    // Error buzzer
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(130, now);
     osc.frequency.linearRampToValueAtTime(70, now + 0.3);
@@ -240,7 +233,6 @@ function playSound(type) {
     osc.start(now);
     osc.stop(now + 0.3);
   } else if (type === 'unlock') {
-    // Safe unlocking futuristic sound
     osc.type = 'sine';
     osc.frequency.setValueAtTime(600, now);
     osc.frequency.exponentialRampToValueAtTime(1800, now + 0.3);
@@ -272,26 +264,21 @@ const elements = {
   feedbackActionArea: document.getElementById('feedback-action-area'),
   btnNextQuestion: document.getElementById('btn-next-question'),
   
-  // Player name inputs
-  playerNameInput: document.getElementById('player-name-input'),
-  certRecipientName: document.getElementById('cert-recipient-name'),
-  certDateVal: document.getElementById('cert-date-val'),
+  // Passcode & Final Code elements
+  passcodeInput: document.getElementById('passcode-input'),
+  passcodeErrorMsg: document.getElementById('passcode-error-msg'),
+  finalCodeValue: document.getElementById('final-code-value'),
+  finalScoreText: document.getElementById('final-score-text'),
   
   // General actions
   btnStartGame: document.getElementById('btn-start-game'),
-  btnRestart: document.getElementById('btn-restart'),
-  btnPrintCert: document.getElementById('btn-print-cert')
+  btnRestart: document.getElementById('btn-restart')
 };
 
 // Initialize Application
 function init() {
   setupEventListeners();
   generateHUDDots();
-  
-  // Update certificate date to current year/month
-  const now = new Date();
-  const months = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
-  elements.certDateVal.innerText = `${months[now.getMonth()]} ${now.getFullYear()}`;
 }
 
 // Generate the 8 dots in HUD
@@ -307,14 +294,14 @@ function generateHUDDots() {
 
 // Update the HUD displays
 function updateHUD() {
-  elements.currentDoorIndicator.innerText = `דלת ${state.currentQuestionIndex + 1} מתוך ${questionsData.length}`;
+  elements.currentDoorIndicator.innerText = 'דלת ' + (state.currentQuestionIndex + 1) + ' מתוך ' + questionsData.length;
   
   const dots = elements.hudDotsContainer.querySelectorAll('.dot');
   dots.forEach((dot, idx) => {
     dot.className = 'dot';
     if (idx === state.currentQuestionIndex) {
       dot.classList.add('active');
-    } else if (state.completedQuestions.has(idx)) {
+    } else if (state.selections[idx] !== null) {
       dot.classList.add('completed');
     }
   });
@@ -322,21 +309,26 @@ function updateHUD() {
 
 // Event Listeners Setup
 function setupEventListeners() {
-  // Start Game click
+  // Start Game click (checks passcode)
   elements.btnStartGame.addEventListener('click', () => {
-    playSound('click');
-    if (elements.playerNameInput && elements.playerNameInput.value.trim() !== "") {
-      state.playerName = elements.playerNameInput.value.trim();
+    const passcode = elements.passcodeInput.value.trim();
+    if (passcode === '7878') {
+      elements.passcodeErrorMsg.classList.add('hidden');
+      playSound('unlock');
+      
+      showScreen(elements.screenRooms);
+      elements.hud.classList.remove('hidden');
+      
+      state.currentQuestionIndex = 0;
+      state.selections.fill(null);
+      generateHUDDots();
+      loadQuestion(0);
+    } else {
+      playSound('error');
+      elements.passcodeErrorMsg.classList.remove('hidden');
+      elements.passcodeInput.style.borderColor = 'var(--alert-neon)';
+      elements.passcodeInput.style.boxShadow = '0 0 10px var(--alert-glow)';
     }
-    elements.certRecipientName.innerText = `מוענקת בזאת ל-${state.playerName}`;
-    
-    showScreen(elements.screenRooms);
-    elements.hud.classList.remove('hidden');
-    
-    state.currentQuestionIndex = 0;
-    state.completedQuestions.clear();
-    generateHUDDots();
-    loadQuestion(0);
   });
   
   // Sound toggle click
@@ -359,7 +351,23 @@ function setupEventListeners() {
     if (nextIndex < questionsData.length) {
       loadQuestion(nextIndex);
     } else {
-      // Completed all questions! Show Victory!
+      // Completed all questions! Evaluate selections
+      let correctCount = 0;
+      questionsData.forEach((q, idx) => {
+        const choice = state.selections[idx];
+        if (choice !== null && q.doors[choice].correct) {
+          correctCount++;
+        }
+      });
+      
+      if (correctCount === 8) {
+        elements.finalCodeValue.innerText = 'The Third Age';
+        elements.finalScoreText.innerText = 'כל הכבוד! ענית נכון על כל 8 השאלות של האתגר!';
+      } else {
+        elements.finalCodeValue.innerText = 'Shingrix';
+        elements.finalScoreText.innerText = 'ענית נכון על ' + correctCount + ' מתוך 8 שאלות. נסה שוב לקבלת הקוד הסודי המלא!';
+      }
+      
       showScreen(elements.screenVictory);
       elements.hud.classList.add('hidden');
       playSound('success');
@@ -370,12 +378,6 @@ function setupEventListeners() {
   elements.btnRestart.addEventListener('click', () => {
     playSound('click');
     location.reload();
-  });
-
-  // Print Certificate click
-  elements.btnPrintCert.addEventListener('click', () => {
-    playSound('click');
-    window.print();
   });
 }
 
@@ -403,9 +405,9 @@ function loadQuestion(index) {
   elements.questionIndexLabel.innerText = qData.indexLabel;
   elements.questionText.innerText = qData.question;
   
-  // Reset feedback panel
+  // Reset feedback panel (does not show correct/incorrect)
   elements.feedbackPanel.className = 'feedback-panel idles';
-  elements.feedbackText.innerText = "קרא את התרחיש הקליני ובחר בדלת בעלת התשובה הנכונה ביותר...";
+  elements.feedbackText.innerText = "בחר בדלת בעלת התשובה הנכונה ביותר...";
   elements.feedbackActionArea.classList.add('hidden');
   
   // Render doors
@@ -413,29 +415,19 @@ function loadQuestion(index) {
   const labels = ['א', 'ב', 'ג'];
   
   qData.doors.forEach((door, idx) => {
-    // 3D Door HTML structure
     const container = document.createElement('div');
     container.className = 'door-container';
     
-    container.innerHTML = `
-      <div class="door-card" id="door-card-${idx}">
-        <!-- Door Front -->
-        <div class="door-front">
-          <div class="door-panel">
-            <div class="door-handle"></div>
-            <div class="door-number">דלת ${labels[idx]}</div>
-            <div class="door-text-plate">${door.answer}</div>
-          </div>
-        </div>
-        <!-- Door Back (Revealed on Open) -->
-        <div class="door-back">
-          <div class="door-light-glowing"></div>
-          <div class="door-success-seal">🔓</div>
-        </div>
-      </div>
-    `;
+    container.innerHTML = '<div class="door-card" id="door-card-' + idx + '">' +
+        '<div class="door-front">' +
+          '<div class="door-panel">' +
+            '<div class="door-handle"></div>' +
+            '<div class="door-number">דלת ' + labels[idx] + '</div>' +
+            '<div class="door-text-plate">' + door.answer + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
     
-    // Add Click listener to the door card
     container.addEventListener('click', () => {
       if (!state.activeSelectionActive) return;
       handleDoorSelection(idx, door);
@@ -445,51 +437,27 @@ function loadQuestion(index) {
   });
 }
 
-// Handle clicking a door
+// Handle clicking a door (hidden correctness during gameplay)
 function handleDoorSelection(doorIdx, doorData) {
-  const card = document.getElementById(`door-card-${doorIdx}`);
+  // Clear selected class from all doors
+  const cards = elements.doorsContainer.querySelectorAll('.door-card');
+  cards.forEach(c => c.classList.remove('selected-door'));
   
-  if (doorData.correct) {
-    state.activeSelectionActive = false; // block clicks
-    playSound('unlock');
-    
-    // Apply 3D swing open animation
-    card.classList.add('door-opened');
-    
-    // Disable incorrect doors styling
-    const allContainers = elements.doorsContainer.querySelectorAll('.door-card');
-    allContainers.forEach((c, idx) => {
-      if (idx !== doorIdx) {
-        c.style.opacity = '0.4';
-        c.style.pointerEvents = 'none';
-      }
-    });
-
-    // Update state & HUD
-    state.completedQuestions.add(state.currentQuestionIndex);
-    updateHUD();
-    
-    // Show success feedback
-    elements.feedbackPanel.className = 'feedback-panel correct fade-in';
-    elements.feedbackText.innerHTML = `<strong>נכון מאוד! 🎉</strong><br>${doorData.explanation}`;
-    elements.feedbackActionArea.classList.remove('hidden');
-  } else {
-    playSound('error');
-    
-    // Apply shake animation to door front
-    card.classList.add('door-locked-shake');
-    setTimeout(() => {
-      card.classList.remove('door-locked-shake');
-    }, 500);
-    
-    // Style this door container as wrong
-    card.querySelector('.door-panel').style.borderColor = 'var(--alert-neon)';
-    card.querySelector('.door-panel').style.boxShadow = '0 0 15px var(--alert-glow)';
-    
-    // Show error feedback with explanation
-    elements.feedbackPanel.className = 'feedback-panel incorrect fade-in';
-    elements.feedbackText.innerHTML = `<strong>דלת נעולה 🔒</strong><br>${doorData.explanation}`;
-  }
+  // Highlight clicked door
+  const card = document.getElementById("door-card-" + doorIdx);
+  card.classList.add('selected-door');
+  
+  // Store choice in state
+  state.selections[state.currentQuestionIndex] = doorIdx;
+  updateHUD();
+  
+  // Play click sound
+  playSound('click');
+  
+  // Show next button and update description box neutrally
+  elements.feedbackPanel.className = 'feedback-panel idles';
+  elements.feedbackText.innerText = 'דלת נבחרה. לחץ "המשך" כדי לעבור לשלב הבא באתגר.';
+  elements.feedbackActionArea.classList.remove('hidden');
 }
 
 // Auto start
