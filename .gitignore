@@ -1,0 +1,5 @@
+node_modules/
+extracted_pptx_text.txt
+extracted_pdf_text.txt
+.DS_Store
+Thumbs.db
