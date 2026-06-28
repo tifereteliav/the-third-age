@@ -1002,3 +1002,184 @@ body {
     margin: 10px auto 20px auto;
   }
 }
+
+
+/* ==========================================================================
+   3D Corridor & Door Frames System (Walking walkthrough animations)
+   ========================================================================== */
+
+/* Perspective Grid for the Clinic Corridor */
+.doors-grid {
+  position: relative;
+  perspective: 1200px;
+  perspective-origin: center center;
+  transition: transform 1.2s cubic-bezier(0.5, 0, 0.1, 1), opacity 1.2s ease-in-out;
+  background: radial-gradient(circle at center, rgba(16, 26, 48, 0.4) 0%, rgba(7, 11, 22, 0.85) 100%);
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* 3D perspective floor grid lines */
+.doors-grid::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 38%;
+  background: 
+    linear-gradient(rgba(58, 134, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(58, 134, 255, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  transform: perspective(180px) rotateX(65deg);
+  transform-origin: bottom center;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Dynamic Walking Zoom Animations (Scale & Translate toward the chosen door) */
+.doors-grid.zoom-door-0 {
+  transform: scale(3.8) translate3d(28%, 8%, 0);
+  opacity: 0;
+}
+
+.doors-grid.zoom-door-1 {
+  transform: scale(3.8) translate3d(0, 8%, 0);
+  opacity: 0;
+}
+
+.doors-grid.zoom-door-2 {
+  transform: scale(3.8) translate3d(-28%, 8%, 0);
+  opacity: 0;
+}
+
+/* Soft transition entering the next corridor room */
+.doors-grid.fade-enter {
+  transform: scale(0.45) translate3d(0, 0, 0);
+  opacity: 0;
+}
+
+/* Door Container and Wall Frame */
+.door-container {
+  position: relative;
+  perspective: 1000px;
+  z-index: 2;
+  background: radial-gradient(circle, rgba(0, 245, 212, 0.25) 0%, rgba(0, 0, 0, 0.95) 85%);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+/* Door Frame (משקוף) */
+.door-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 5px solid #0f182e;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.9), 0 0 10px rgba(58, 134, 255, 0.15);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Outer LED indicator above the door frame */
+.door-container::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 6px;
+  background: var(--warning-neon);
+  box-shadow: 0 0 8px var(--warning-glow);
+  border-radius: 2px;
+  z-index: 4;
+  transition: all 0.3s;
+}
+
+.door-container.correct-unlocked::after {
+  background: var(--success-neon);
+  box-shadow: 0 0 10px var(--success-glow);
+}
+
+/* Door Card (the swinging leaf) */
+.door-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: right center; /* Hinge on the right edge (standard RTL hinge style) */
+  z-index: 2;
+}
+
+.door-front {
+  background: linear-gradient(145deg, #1f2b44 0%, #0d1627 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+/* Door Open Animation (swinging Y rotation) */
+.door-opened {
+  transform: rotateY(115deg) translateZ(10px);
+  pointer-events: none;
+  box-shadow: -10px 10px 20px rgba(0,0,0,0.6);
+}
+
+/* Glowing exit pathway indicator inside the door frame */
+.door-pathway-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  color: var(--success-neon);
+  text-shadow: 0 0 20px var(--success-glow);
+  z-index: 1;
+  pointer-events: none;
+  animation: pulseLight 1.5s infinite alternate;
+}
+
+@media (max-width: 768px) {
+  .doors-grid::before {
+    display: none; /* Hide perspective grid lines on vertical mobile grid */
+  }
+  
+  .door-container {
+    height: 115px;
+  }
+  
+  .door-card {
+    transform-origin: top center; /* Swings upwards like a trapdoor on mobile */
+  }
+  
+  .door-opened {
+    transform: rotateX(-105deg);
+  }
+  
+  .doors-grid.zoom-door-0 {
+    transform: scale(3.5) translate3d(0, 30%, 0);
+    opacity: 0;
+  }
+
+  .doors-grid.zoom-door-1 {
+    transform: scale(3.5) translate3d(0, 0, 0);
+    opacity: 0;
+  }
+
+  .doors-grid.zoom-door-2 {
+    transform: scale(3.5) translate3d(0, -30%, 0);
+    opacity: 0;
+  }
+}

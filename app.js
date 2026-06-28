@@ -353,34 +353,59 @@ function setupEventListeners() {
     }
   });
 
-  // Next question click
+  // Next question click (with walking zoom transition)
   elements.btnNextQuestion.addEventListener('click', () => {
-    playSound('click');
-    const nextIndex = state.currentQuestionIndex + 1;
-    if (nextIndex < questionsData.length) {
-      loadQuestion(nextIndex);
-    } else {
-      // Completed all questions! Evaluate selections
-      let correctCount = 0;
-      questionsData.forEach((q, idx) => {
-        const choice = state.selections[idx];
-        if (choice !== null && q.doors[choice].correct) {
-          correctCount++;
-        }
-      });
-      
-      if (correctCount === 8) {
-        elements.finalCodeValue.innerText = 'The Third Age';
-        elements.finalScoreText.innerText = 'כל הכבוד! ענית נכון על כל 8 השאלות של האתגר!';
+    if (!state.activeSelectionActive) return;
+    state.activeSelectionActive = false; // Block clicks during walking animation
+    
+    const choice = state.selections[state.currentQuestionIndex];
+    const card = document.getElementById("door-card-" + choice);
+    const container = card.parentElement;
+    
+    // Turn LED indicator green & swing door open in 3D
+    playSound('unlock');
+    container.classList.add('correct-unlocked');
+    card.classList.add('door-opened');
+    
+    // Zoom/walk camera forward through the selected door
+    elements.doorsContainer.classList.add("zoom-door-" + choice);
+    
+    setTimeout(() => {
+      const nextIndex = state.currentQuestionIndex + 1;
+      if (nextIndex < questionsData.length) {
+        loadQuestion(nextIndex);
+        
+        // emerging walk-out effect in the next corridor room
+        elements.doorsContainer.className = 'doors-grid fade-enter';
+        // Force reflow
+        elements.doorsContainer.offsetHeight;
+        elements.doorsContainer.classList.remove('fade-enter');
+        
+        state.activeSelectionActive = true;
       } else {
-        elements.finalCodeValue.innerText = 'Shingrix';
-        elements.finalScoreText.innerText = 'ענית נכון על ' + correctCount + ' מתוך 8 שאלות. נסה שוב לקבלת הקוד הסודי המלא!';
+        // Completed all questions! Evaluate selections
+        let correctCount = 0;
+        questionsData.forEach((q, idx) => {
+          const userChoice = state.selections[idx];
+          if (userChoice !== null && q.doors[userChoice].correct) {
+            correctCount++;
+          }
+        });
+        
+        if (correctCount === 8) {
+          elements.finalCodeValue.innerText = 'The Third Age';
+          elements.finalScoreText.innerText = 'כל הכבוד! ענית נכון על כל 8 השאלות של האתגר!';
+        } else {
+          elements.finalCodeValue.innerText = 'Shingrix';
+          elements.finalScoreText.innerText = 'ענית נכון על ' + correctCount + ' מתוך 8 שאלות. נסה שוב לקבלת הקוד הסודי המלא!';
+        }
+        
+        showScreen(elements.screenVictory);
+        elements.hud.classList.add('hidden');
+        playSound('success');
+        state.activeSelectionActive = true;
       }
-      
-      showScreen(elements.screenVictory);
-      elements.hud.classList.add('hidden');
-      playSound('success');
-    }
+    }, 1200); // 1200ms corridor zoom timeout
   });
 
   // Restart click
@@ -411,6 +436,9 @@ function loadQuestion(index) {
   state.activeSelectionActive = true;
   updateHUD();
   
+  // Reset doors container class
+  elements.doorsContainer.className = 'doors-grid';
+  
   const qData = questionsData[index];
   
   elements.questionIndexLabel.innerText = qData.indexLabel;
@@ -429,15 +457,17 @@ function loadQuestion(index) {
     const container = document.createElement('div');
     container.className = 'door-container';
     
-    container.innerHTML = '<div class="door-card" id="door-card-' + idx + '">' +
-        '<div class="door-front">' +
-          '<div class="door-panel">' +
-            '<div class="door-handle"></div>' +
-            '<div class="door-number">דלת ' + labels[idx] + '</div>' +
-            '<div class="door-text-plate">' + door.answer + '</div>' +
+    container.innerHTML = '<div class="door-frame"></div>' +
+        '<div class="door-pathway-glow">🔓</div>' +
+        '<div class="door-card" id="door-card-' + idx + '">' +
+          '<div class="door-front">' +
+            '<div class="door-panel">' +
+              '<div class="door-handle"></div>' +
+              '<div class="door-number">דלת ' + labels[idx] + '</div>' +
+              '<div class="door-text-plate">' + door.answer + '</div>' +
+            '</div>' +
           '</div>' +
-        '</div>' +
-      '</div>';
+        '</div>';
     
     container.addEventListener('click', () => {
       if (!state.activeSelectionActive) return;
