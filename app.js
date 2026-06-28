@@ -245,6 +245,7 @@ function playSound(type) {
 
 // DOM Elements
 const elements = {
+  screenLogin: document.getElementById('screen-login'),
   screenIntro: document.getElementById('screen-intro'),
   screenRooms: document.getElementById('screen-rooms'),
   screenVictory: document.getElementById('screen-victory'),
@@ -271,6 +272,7 @@ const elements = {
   finalScoreText: document.getElementById('final-score-text'),
   
   // General actions
+  btnSubmitPasscode: document.getElementById('btn-submit-passcode'),
   btnStartGame: document.getElementById('btn-start-game'),
   btnRestart: document.getElementById('btn-restart')
 };
@@ -309,26 +311,33 @@ function updateHUD() {
 
 // Event Listeners Setup
 function setupEventListeners() {
-  // Start Game click (checks passcode)
-  elements.btnStartGame.addEventListener('click', () => {
+  // Passcode submit click
+  elements.btnSubmitPasscode.addEventListener('click', () => {
     const passcode = elements.passcodeInput.value.trim();
     if (passcode === '7878') {
       elements.passcodeErrorMsg.classList.add('hidden');
       playSound('unlock');
       
-      showScreen(elements.screenRooms);
-      elements.hud.classList.remove('hidden');
-      
-      state.currentQuestionIndex = 0;
-      state.selections.fill(null);
-      generateHUDDots();
-      loadQuestion(0);
+      // Go to patient briefing screen
+      showScreen(elements.screenIntro);
     } else {
       playSound('error');
       elements.passcodeErrorMsg.classList.remove('hidden');
       elements.passcodeInput.style.borderColor = 'var(--alert-neon)';
       elements.passcodeInput.style.boxShadow = '0 0 10px var(--alert-glow)';
     }
+  });
+
+  // Start Game click (Patient Briefing page "התחל")
+  elements.btnStartGame.addEventListener('click', () => {
+    playSound('click');
+    showScreen(elements.screenRooms);
+    elements.hud.classList.remove('hidden');
+    
+    state.currentQuestionIndex = 0;
+    state.selections.fill(null);
+    generateHUDDots();
+    loadQuestion(0);
   });
   
   // Sound toggle click
@@ -383,6 +392,8 @@ function setupEventListeners() {
 
 // Navigation helper
 function showScreen(screen) {
+  elements.screenLogin.classList.add('hidden');
+  elements.screenLogin.classList.remove('active');
   elements.screenIntro.classList.add('hidden');
   elements.screenIntro.classList.remove('active');
   elements.screenRooms.classList.add('hidden');

@@ -39,12 +39,28 @@
     <!-- Main Screens Viewport -->
     <main id="game-viewport">
       
-      <!-- SCREEN 1: INTRO -->
-      <section id="screen-intro" class="screen active">
+      <!-- SCREEN 0: LOGIN GATE -->
+      <section id="screen-login" class="screen active">
+        <div class="glass-card text-center fade-in" style="max-width: 480px; height: auto; min-height: auto; justify-content: center; gap: 20px; padding: 30px;">
+          <div class="card-badge">אתגר אינטראקטיבי בסוכרת</div>
+          <h1 class="game-title" style="font-size: 1.9rem; margin-bottom: 5px;">הכניסה לאתגר</h1>
+          <p class="game-subtitle" style="font-size: 0.95rem; margin-bottom: 10px;">נא להזין את קוד הגישה שקיבלת כדי להתחיל באתגר הקליני.</p>
+          
+          <div class="passcode-input-group" style="margin-bottom: 10px; width: 100%;">
+            <input type="password" id="passcode-input" placeholder="🔒 קוד כניסה" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px 16px; border-radius: 10px; font-family: var(--font-primary); font-size: 1.25rem; text-align: center; width: 100%; outline: none; transition: border-color 0.3s; direction: ltr;">
+            <div id="passcode-error-msg" class="error-text hidden" style="color: var(--alert-neon); font-size: 0.95rem; margin-top: 10px; font-weight: 600;">קוד כניסה שגוי. נסה שוב!</div>
+          </div>
+
+          <button id="btn-submit-passcode" class="btn btn-primary btn-large" style="width: 100%;">כניסה לאתגר 🔓</button>
+        </div>
+      </section>
+
+      <!-- SCREEN 1: INTRO (Patient Briefing) -->
+      <section id="screen-intro" class="screen hidden">
         <div class="glass-card text-center fade-in">
-          <div class="card-badge">אתגר אינטראקטיבי לגיל השלישי</div>
+          <div class="card-badge">תיק מטופל ואומדן קליני</div>
           <h1 class="game-title">הבריחה מגיל הזקנה הטכנולוגי</h1>
-          <p class="game-subtitle">פתור את שמונת שלבי האתגר הרפואי והטכנולוגי כדי לפתוח את הדלתות ולהוביל את משה לטיפול בטוח!</p>
+          <p class="game-subtitle">פתור את שמונת שלבי האתגר הרפואי והטכנולוגי כדי להוביל את משה לטיפול בטוח!</p>
           
           <div class="patient-briefing">
             <h3>תיק מטופל: משה שרעבי (בן 68)</h3>
@@ -57,14 +73,8 @@
               </div>
             </div>
             <p class="mission-text">
-              <strong>המשימה:</strong> הקשב להרצאה וענה על שאלות האתגר בזמן אמת. בכל שלב, עליך <strong>לבחור ולפתוח את הדלת הנכונה</strong> כדי להתקדם במסדרון הקליניקה.
+              <strong>המשימה:</strong> הקשב להרצאה וענה על שאלות האתגר בזמן אמת. בכל שלב, עליך <strong>לבחור את הדלת הנכונה</strong> כדי להתקדם במסדרון הקליניקה.
             </p>
-          </div>
-
-          <div class="passcode-input-group" style="margin-bottom: 20px;">
-            <label for="passcode-input" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted);">הזן קוד כניסה (קוד: 7878):</label>
-            <input type="password" id="passcode-input" placeholder="🔒 קוד כניסה" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 10px 14px; border-radius: 8px; font-family: var(--font-primary); font-size: 1.1rem; text-align: center; width: 100%; max-width: 300px; outline: none; transition: border-color 0.3s; direction: ltr;">
-            <div id="passcode-error-msg" class="error-text hidden" style="color: var(--alert-neon); font-size: 0.95rem; margin-top: 8px; font-weight: 600;">קוד כניסה שגוי. נסה שוב!</div>
           </div>
 
           <button id="btn-start-game" class="btn btn-primary btn-large">התחל באתגר הדלתות 🚪</button>
