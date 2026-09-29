@@ -2,31 +2,27 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>האתגר הטכנולוגי בגיל השלישי | אתגר הדלתות התלת-ממדיות</title>
-  <!-- Google Fonts: Assistant for Hebrew, Inter for English -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>סימולציה קלינית בנושא GLP-1 RA | אתגר הדלתות התלת-ממדיות</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-
-  <!-- Game Container -->
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  
   <div id="game-container">
-    
-    <!-- HUD Header (Hidden during Intro/Victory) -->
+    <!-- Top HUD Navigation -->
     <header id="game-hud" class="hidden">
-      <div class="hud-item patient-info">
-        <span class="hud-label">מטופל:</span>
-        <span class="hud-value highlight">משה, בן 68</span>
-      </div>
-      <div class="hud-item progress-tracker">
+      <div class="hud-item door-tracker">
         <span class="hud-label">מיקום:</span>
         <span id="current-door-indicator" class="hud-value">דלת 1 מתוך 8</span>
-        <div class="room-dots" id="hud-dots-container">
-          <!-- Dots generated dynamically in app.js -->
-        </div>
+      </div>
+      <div class="hud-item progress-dots" id="hud-dots-container">
+        <!-- Dots rendered via JS -->
       </div>
       <div class="hud-item sound-control">
         <button id="btn-toggle-sound" class="btn-icon" title="השתק/הפעל קול">
@@ -39,45 +35,53 @@
     <!-- Main Screens Viewport -->
     <main id="game-viewport">
       
-      <!-- SCREEN 0: LOGIN GATE -->
-      <section id="screen-login" class="screen active">
-        <div class="glass-card text-center fade-in" style="max-width: 480px; height: auto; min-height: auto; justify-content: center; gap: 20px; padding: 30px;">
-          <div class="card-badge">אתגר אינטראקטיבי בסוכרת</div>
-          <h1 class="game-title" style="font-size: 1.9rem; margin-bottom: 5px;">הכניסה לאתגר</h1>
-          <p class="game-subtitle" style="font-size: 0.95rem; margin-bottom: 10px;">נא להזין את קוד הגישה שקיבלת כדי להתחיל באתגר הקליני.</p>
-          
-          <div class="passcode-input-group" style="margin-bottom: 10px; width: 100%;">
-            <input type="password" id="passcode-input" placeholder="🔒 קוד כניסה" style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 12px 16px; border-radius: 10px; font-family: var(--font-primary); font-size: 1.25rem; text-align: center; width: 100%; outline: none; transition: border-color 0.3s; direction: ltr;">
-            <div id="passcode-error-msg" class="error-text hidden" style="color: var(--alert-neon); font-size: 0.95rem; margin-top: 10px; font-weight: 600;">קוד כניסה שגוי. נסה שוב!</div>
-          </div>
-
-          <button id="btn-submit-passcode" class="btn btn-primary btn-large" style="width: 100%;">כניסה לאתגר 🔓</button>
-        </div>
-      </section>
-
-      <!-- SCREEN 1: INTRO (Patient Briefing) -->
-      <section id="screen-intro" class="screen hidden">
+      <!-- SCREEN 1: INTRO & WELCOME (Patient Briefing & Feedback Mode Selection) -->
+      <section id="screen-intro" class="screen active">
         <div class="glass-card text-center fade-in">
-          <div class="card-badge">תיק מטופל ואומדן קליני</div>
-          <h1 class="game-title">האתגר הטכנולוגי בגיל השלישי</h1>
-          <p class="game-subtitle">פתור את שמונת שלבי האתגר הרפואי והטכנולוגי כדי להוביל את משה לטיפול בטוח!</p>
+          <div class="card-badge">סימולציה קלינית אינטראקטיבית</div>
+          <h1 class="game-title">ברוכים הבאים לסימולציה בנושא GLP-1 RA</h1>
+          <p class="game-subtitle">ניהול הטיפול, התאמה טכנולוגית ואומדן קליני בסוכרת בגיל השלישי</p>
           
           <div class="patient-briefing">
             <h3>תיק מטופל: משה שרעבי (בן 68)</h3>
             <div class="briefing-grid">
               <div class="briefing-item">
-                <strong>מצב רפואי:</strong> סוכרת סוג 2 מזה 12 שנים (סוכרת ידועה מגיל 56). לא מאוזן באופן מיטבי (HbA1c 8.2%). מועמד לניטור רציף (CGM).
+                <strong>מצב רפואי:</strong> סוכרת סוג 2 מזה 12 שנים (סוכרת ידועה מגיל 56). לא מאוזן באופן מיטבי (HbA1c 8.2%). מועמד לניטור רציף (CGM) וטיפול מתקדם.
               </div>
               <div class="briefing-item">
                 <strong>האתגר:</strong> משה זקוק להתאמת טכנולוגיה, אומדן קוגניטיבי, מענה על חששות אישיים ומתן חיסון שלבקת חוגרת (Shingrix).
               </div>
             </div>
             <p class="mission-text">
-              <strong>המשימה:</strong> הקשב להרצאה וענה על שאלות האתגר בזמן אמת. בכל שלב, עליך <strong>לבחור את הדלת הנכונה</strong> כדי להתקדם במסדרון הקליניקה.
+              <strong>המשימה:</strong> בכל שלב, עליך <strong>לבחור את הדלת הנכונה</strong> כדי להתקדם במסדרון הקליניקה.
             </p>
           </div>
 
-          <button id="btn-start-game" class="btn btn-primary btn-large">התחל את חדר הבריחה 🚪</button>
+          <!-- Feedback Mode Selector -->
+          <div class="feedback-mode-container">
+            <h3 class="mode-selection-title">⚙️ בחרו כיצד תרצו לקבל משוב במהלך הסימולציה:</h3>
+            <div class="mode-options-grid">
+              <label class="mode-card selected" id="mode-card-immediate">
+                <input type="radio" name="feedback-mode" value="immediate" checked>
+                <div class="mode-icon">⚡</div>
+                <div class="mode-info">
+                  <div class="mode-name">משוב מיידי</div>
+                  <div class="mode-desc">לראות את התשובות וההסברים מיד לאחר מענה על כל שאלה</div>
+                </div>
+              </label>
+
+              <label class="mode-card" id="mode-card-summary">
+                <input type="radio" name="feedback-mode" value="summary">
+                <div class="mode-icon">📋</div>
+                <div class="mode-info">
+                  <div class="mode-name">משוב מסכם בסיום</div>
+                  <div class="mode-desc">לראות את התשובות וההסברים המלאים רק בסיום הסימולציה</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button id="btn-start-game" class="btn btn-primary btn-large">להתחלה לחצו כאן 🚀</button>
         </div>
       </section>
 
@@ -118,32 +122,31 @@
       <section id="screen-victory" class="screen hidden">
         <div class="glass-card text-center fade-in">
           <div class="victory-seal">🏆</div>
-          <h1 class="victory-title">האתגר הושלם!</h1>
-          <p class="victory-subtitle">סיימת את כל 8 שלבי ההערכה הרפואית.</p>
+          <h1 class="victory-title">הסימולציה הושלמה!</h1>
+          <p class="victory-subtitle">סיימת בהצלחה את כל 8 שלבי ההערכה הרפואית.</p>
           
-          <!-- Code reward panel -->
-          <div class="final-code-panel">
-            <h3>קוד הגמר של האתגר:</h3>
-            <div id="final-code-value" class="code-value">THE THIRD AGE</div>
-            <p id="final-score-text" class="score-text">ענית נכון על כל השאלות!</p>
+          <!-- Relative Score Display -->
+          <div class="score-summary-card">
+            <div class="score-circle">
+              <span id="final-score-percent">100%</span>
+            </div>
+            <div class="score-details">
+              <h2>ציון סופי בסימולציה</h2>
+              <p id="final-score-ratio" class="score-ratio">ענית נכון על 8 מתוך 8 שאלות</p>
+              <p id="final-score-feedback" class="score-feedback">ביצוע מעולה! הפגנת שליטה מלאה בהנחיות הקליניות.</p>
+            </div>
           </div>
 
-          <div class="clinical-summary">
-            <h3>סיכום השלבים שעברת:</h3>
-            <ul class="summary-list">
-              <li>✔️ <strong>סיכוני דמנציה בסוכרת</strong> (לפי מחקר ה-JAMA).</li>
-              <li>✔️ <strong>הערכת Mini-Cog וכשירות קוגניטיבית</strong>.</li>
-              <li>✔️ <strong>יתרונות ה-CGM במבוגרים</strong> (מחקר WISDM).</li>
-              <li>✔️ <strong>התמודדות עם חרדות וחסמים טכנולוגיים</strong>.</li>
-              <li>✔️ <strong>סל הבריאות וזכאות לחיסון שלבקת חוגרת</strong>.</li>
-              <li>✔️ <strong>שרשרת קירור ותנאי אחסון ל-Shingrix</strong>.</li>
-              <li>✔️ <strong>לוח זמנים למנה השנייה של החיסון</strong>.</li>
-              <li>✔️ <strong>מתן בו-זמני של חיסון שפעת ושלבקת חוגרת</strong>.</li>
-            </ul>
+          <!-- Detailed Questions Review List -->
+          <div class="questions-review-panel">
+            <h3 class="review-title">📚 פירוט התשובות והסברים קליניים מלאים</h3>
+            <div id="review-list-container" class="review-list">
+              <!-- Dynamically populated via app.js -->
+            </div>
           </div>
 
           <div class="victory-actions">
-            <button id="btn-restart" class="btn btn-primary btn-large">נסה שוב 🔁</button>
+            <button id="btn-restart" class="btn btn-primary btn-large">התחל סימולציה מחדש 🔁</button>
           </div>
         </div>
       </section>
