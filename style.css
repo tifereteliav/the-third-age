@@ -1933,3 +1933,138 @@ body {
     text-align: center;
   }
 }
+
+
+/* ==========================================================================
+   Significant Typography & Readability Enhancements
+   ========================================================================== */
+
+/* Question Header & Scenario Text */
+.question-header #question-index-label {
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  padding: 8px 22px !important;
+  letter-spacing: 0.5px;
+}
+
+.scenario-panel {
+  background: rgba(13, 20, 38, 0.75) !important;
+  border: 1px solid rgba(58, 134, 255, 0.3) !important;
+  border-radius: 16px !important;
+  padding: 22px 28px !important;
+  margin-bottom: 22px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(58, 134, 255, 0.05);
+}
+
+.scenario-panel h2, #question-text {
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  line-height: 1.55 !important;
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  font-family: var(--font-primary) !important;
+}
+
+/* 3D Room & Door Dimensions for Large Text */
+.room-3d {
+  height: 440px !important;
+}
+
+.door-container {
+  height: 380px !important;
+  width: 30% !important;
+}
+
+/* Door Answers Text */
+.door-screen, .door-text-plate {
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  line-height: 1.55 !important;
+  color: #ffffff !important;
+  padding: 18px 16px !important;
+  background: rgba(3, 7, 16, 0.88) !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
+  font-family: var(--font-primary) !important;
+}
+
+.door-card.selected-door .door-screen {
+  color: #fff !important;
+  font-weight: 800 !important;
+}
+
+.door-card.selected-door-correct .door-screen {
+  color: #a7f3d0 !important;
+  font-weight: 800 !important;
+}
+
+.door-card.selected-door-incorrect .door-screen {
+  color: #fecdd3 !important;
+  font-weight: 800 !important;
+}
+
+/* Feedback Box Text */
+.feedback-content {
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+  line-height: 1.6 !important;
+}
+
+.feedback-content strong {
+  font-size: 1.25rem !important;
+}
+
+/* Buttons */
+.btn-large {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  padding: 14px 34px !important;
+}
+
+/* Review Summary Panel in Victory Screen */
+.review-q-title {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+}
+
+.review-answers {
+  font-size: 1.15rem !important;
+  line-height: 1.6 !important;
+}
+
+.review-explanation {
+  font-size: 1.1rem !important;
+  line-height: 1.65 !important;
+  color: #cbd5e1 !important;
+}
+
+.review-explanation strong {
+  color: var(--primary-neon) !important;
+  font-size: 1.12rem !important;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .scenario-panel h2, #question-text {
+    font-size: 1.45rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .scenario-panel {
+    padding: 16px 18px !important;
+  }
+
+  .door-container {
+    height: auto !important;
+    min-height: 130px !important;
+  }
+
+  .door-screen, .door-text-plate {
+    font-size: 1.15rem !important;
+    line-height: 1.45 !important;
+    padding: 14px 16px !important;
+  }
+
+  .feedback-content {
+    font-size: 1.05rem !important;
+  }
+}
