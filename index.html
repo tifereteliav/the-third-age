@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>סימולציה קלינית בנושא GLP-1 RA | אתגר הדלתות התלת-ממדיות</title>
-  <link rel="stylesheet" href="style.css">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>האתגר הקליני: טיפול בסוכרת ו-GLP-1 RA בגיל השלישי</title>
+  <link rel="stylesheet" href="style.css?v=3.5">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -35,12 +38,12 @@
     <!-- Main Screens Viewport -->
     <main id="game-viewport">
       
-      <!-- SCREEN 1: INTRO & WELCOME (Patient Briefing & Feedback Mode Selection) -->
+      <!-- SCREEN 1: INTRO & WELCOME -->
       <section id="screen-intro" class="screen active">
         <div class="glass-card text-center fade-in">
           <div class="card-badge">סימולציה קלינית אינטראקטיבית</div>
-          <h1 class="game-title">ברוכים הבאים לסימולציה בנושא GLP-1 RA</h1>
-          <p class="game-subtitle">ניהול הטיפול, התאמה טכנולוגית ואומדן קליני בסוכרת בגיל השלישי</p>
+          <h1 class="game-title">האתגר הקליני: טיפול בסוכרת ו-GLP-1 RA בגיל השלישי</h1>
+          <p class="game-subtitle">סימולציה אינטראקטיבית לאומדן, התאמה טכנולוגית ומניעת סיבוכים</p>
           
           <div class="patient-briefing">
             <h3>תיק מטופל: משה שרעבי (בן 68)</h3>
@@ -59,14 +62,14 @@
 
           <!-- Feedback Mode Selector -->
           <div class="feedback-mode-container">
-            <h3 class="mode-selection-title">⚙️ בחרו כיצד תרצו לקבל משוב במהלך הסימולציה:</h3>
+            <h3 class="mode-selection-title">⚙️ כיצד תרצו לקבל את המשוב בסימולציה?</h3>
             <div class="mode-options-grid">
               <label class="mode-card selected" id="mode-card-immediate">
                 <input type="radio" name="feedback-mode" value="immediate" checked>
                 <div class="mode-icon">⚡</div>
                 <div class="mode-info">
-                  <div class="mode-name">משוב מיידי</div>
-                  <div class="mode-desc">לראות את התשובות וההסברים מיד לאחר מענה על כל שאלה</div>
+                  <div class="mode-name">משוב מיידי עם הסבר</div>
+                  <div class="mode-desc">קבלת תשובה נכונה והסבר קליני מפורט מיד לאחר מענה על כל שאלה</div>
                 </div>
               </label>
 
@@ -74,14 +77,14 @@
                 <input type="radio" name="feedback-mode" value="summary">
                 <div class="mode-icon">📋</div>
                 <div class="mode-info">
-                  <div class="mode-name">משוב מסכם בסיום</div>
-                  <div class="mode-desc">לראות את התשובות וההסברים המלאים רק בסיום הסימולציה</div>
+                  <div class="mode-name">משוב והסברים בסיום בלבד</div>
+                  <div class="mode-desc">מענה רציף וסמוי, עם פירוט מלא של כל התשובות וההסברים רק בסוף</div>
                 </div>
               </label>
             </div>
           </div>
 
-          <button id="btn-start-game" class="btn btn-primary btn-large">להתחלה לחצו כאן 🚀</button>
+          <button id="btn-start-game" class="btn btn-primary btn-large">להתחלת הסימולציה 🚀</button>
         </div>
       </section>
 
@@ -161,6 +164,6 @@
 
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3.5"></script>
 </body>
 </html>

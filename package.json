@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "Interactive clinical escape room game for diabetes in the third age and Herpes Zoster vaccination.",
   "scripts": {
-    "dev": "npx -y http-server -p 8085"
+    "dev": "npx -y http-server -p 8085 -c-1"
   }
 }
